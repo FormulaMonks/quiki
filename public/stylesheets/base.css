@@ -1,6 +1,7 @@
 body {
   text-align: left;
-  padding: 0px; }
+  padding: 0px;
+  font-family: "Segoe UI","Lucida Grande",Arial,sans-serif; }
 
 label {
   display: block; }
@@ -47,11 +48,27 @@ ul#main_menu {
   float: left;
   padding: 10px;
   width: 670px; }
+  #content h1 {
+    font-size: 20px; }
+  #content h2 {
+    font-size: 17px; }
+  #content h3 {
+    font-size: 15px; }
+  #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+    font-weight: bold;
+    padding: 0px;
+    margin: 10px 0px; }
 
 #sidebar {
   float: left;
   width: 250px;
   padding: 10px; }
+
+h1.with_menu {
+  float: left; }
+
+ul.menu {
+  float: right; }
 
 #page_menu ul {
   list-style-type: none; }
@@ -107,20 +124,29 @@ body.pages.edit #page_submit {
 
 body.pages.show h2 {
   padding: 2px 0px 0px 14px; }
-
-p.code_stamp {
+body.pages.show p.code_stamp {
   padding: 4px 10px 0px 0px;
   margin: 20px 0px 0px 0px;
   text-align: right;
   background-color: #0C1021;
   color: #eef; }
-  p.code_stamp .syntax {
+  body.pages.show p.code_stamp .syntax {
     margin-right: 10px; }
-  p.code_stamp a {
+  body.pages.show p.code_stamp a {
     color: #66f; }
-
-pre.blackboard {
+body.pages.show pre.blackboard {
   margin: 0px 0px 20px 0px; }
+
+#page_header {
+  background-color: #eee;
+  height: 20px;
+  padding: 10px;
+  margin-bottom: 10px; }
+  #page_header h1 {
+    float: left;
+    margin: 0px; }
+  #page_header ul.menu {
+    float: right; }
 
 #parser_reference dt {
   font-weight: normal;

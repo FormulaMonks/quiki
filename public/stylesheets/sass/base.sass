@@ -12,6 +12,7 @@
 body
   :text-align left
   :padding 0px
+  :font-family "Segoe UI","Lucida Grande",Arial,sans-serif
   
 label
   :display block
@@ -60,11 +61,26 @@ ul#main_menu
   :padding 10px
   // 960px - 250px sidebar - 20px padding on sidebar - 20px padding on content = 670px
   :width 670px
+  h1
+    :font-size 20px
+  h2
+    :font-size 17px
+  h3
+    :font-size 15px
+  h1, h2, h3, h4, h5, h6
+    :font-weight bold
+    :padding 0px
+    :margin 10px 0px
 
 #sidebar
   :float left
   :width 250px
   :padding 10px
+  
+h1.with_menu
+  :float left
+ul.menu
+  :float right
 
 // page menu ==================================================================
 #page_menu
@@ -129,18 +145,29 @@ body.pages.edit
 body.pages.show
   h2
     :padding 2px 0px 0px 14px
-p.code_stamp
-  :padding 4px 10px 0px 0px
-  :margin 20px 0px 0px 0px
-  :text-align right
-  :background-color #0C1021
-  :color #eef
-  .syntax
-    :margin-right 10px
-  a
-    :color #66f
-pre.blackboard
-  :margin 0px 0px 20px 0px
+  p.code_stamp
+    :padding 4px 10px 0px 0px
+    :margin 20px 0px 0px 0px
+    :text-align right
+    :background-color #0C1021
+    :color #eef
+    .syntax
+      :margin-right 10px
+    a
+      :color #66f
+  pre.blackboard
+    :margin 0px 0px 20px 0px
+    
+#page_header
+  :background-color #eee
+  :height 20px
+  :padding 10px
+  :margin-bottom 10px
+  h1
+    :float left
+    :margin 0px
+  ul.menu
+    :float right
   
 // parser reference ===========================================================
 #parser_reference

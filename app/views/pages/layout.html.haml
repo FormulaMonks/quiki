@@ -1,8 +1,9 @@
-%ul.menu
-  = yield :menu
-  %li= link_to 'Versions', page_versions_path(@page)
-  %li= link_to 'Delete', @page, :method => :delete, :confirm => "Are you sure you want to delete #{@page}?"
-  - if @version && !@page.current?(@version)
-    %li= link_to 'Restore', page_path(@page, :page => { :version => @version.version }), :method => :put
-%h2= @page
-= yield
+#page_header
+  %h1= @page
+  %ul.menu
+    = yield :menu
+    %li= link_to 'Versions', page_versions_path(@page)
+    %li= link_to 'Delete', @page, :method => :delete, :confirm => "Are you sure you want to delete #{@page}?"
+    - if @version && !@page.current?(@version)
+      %li= link_to 'Restore', page_path(@page, :page => { :version => @version.version }), :method => :put
+#page_content= yield
