@@ -2,3 +2,4 @@
 log/*
 tmp/*
 config/database.yml
+public/stylesheets/base.css
