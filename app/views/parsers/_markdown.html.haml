@@ -1,0 +1,50 @@
+%dl
+  %dt #H1#
+  %dd
+    %h1 H1
+  %dt ###H3###
+  %dd
+    %h3 H3
+  %dt [Link](http://www.example.com/)
+  %dd
+    = link_to '[Link]', 'http://www.example.com/'
+  %dt > This is blockquoted
+  %dd
+    %blockquote This is blockquoted
+  %dt `inline code`
+  %dd
+    %code inline code
+  %dt * unordered list item
+  %dd
+    %ul
+      %li unordered list item
+  %dt + unordered list item
+  %dd
+    %ul
+      %li unordered list item
+  %dt - unordered list item
+  %dd
+    %ul
+      %li unordered list item
+  %dt 1. ordered list item
+  %dd
+    %ol
+      %li ordered list item
+  %dt --- (horizontal rule)
+  %dd.rule_hack
+    %hr
+  %dt _italic_
+  %dd
+    %em italic
+  %dt *italic*
+  %dd
+    %em italic
+  %dt __bold__
+  %dd
+    %strong bold
+  %dt **bold**
+  %dd
+    %strong bold
+  %dt \*\*not bold\*\*
+  %dd
+    ** not bold **

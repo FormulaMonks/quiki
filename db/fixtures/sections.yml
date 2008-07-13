@@ -1,0 +1,4 @@
+<% for i in 1..10 %>
+section_<%= i %>:
+  name: <%= Faker::Lorem.words(rand(2)+1).join('') %>
+<% end %>

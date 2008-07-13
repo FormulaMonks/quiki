@@ -1,0 +1,5 @@
+%li.page{ :class => current_if(@page && item == @page) }
+  %span.handle [+]
+  = link_to item, item
+  - form_for item do |f|
+    = f.hidden_field :section_id

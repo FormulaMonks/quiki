@@ -1,0 +1,7 @@
+- inside_layout 'pages/layout' do
+  - content_for :menu do
+    %li= link_to 'View', @page
+  %table.versions
+    - for version in @versions
+      %tr
+        %td{ :class => @page.current?(version) ? 'current' : nil }= link_to version.updated_at, page_version_path(@page, version.version)

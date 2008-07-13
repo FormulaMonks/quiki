@@ -1,0 +1,12 @@
+%ul.menu
+  %li= link_to 'View', @page
+  %li= link_to 'Versions', page_versions_path(@page)
+  %li= link_to 'Delete', @page, :method => :delete, :confirm => "Are you sure you want to delete #{@page}?"
+- form_for @page do |f|
+  = f.text_field :title
+  = f.text_area :body, :wrap => 'off'
+  %label Parser
+  = f.select :parser, Page.parsers
+  %label Section
+  = f.select :section_id, Section.find(:all, :order => 'name ASC').collect{ |s| [ s.name, s.id ] }
+  = f.submit 'Save'

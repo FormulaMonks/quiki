@@ -1,0 +1,5 @@
+%h2 New Page
+- labeled_form_for @page do |f|
+  = f.text_field :title
+  %p.explanation /^[a-zA-Z0-9_ ]+$/
+  = f.submit 'Create'

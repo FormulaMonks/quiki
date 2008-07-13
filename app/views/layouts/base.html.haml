@@ -1,0 +1,17 @@
+!!!
+%html
+  %head
+    = javascript_include_tag 'jquery-1.2.6.min.js', 'jquery.ui.all.js', 'jquery.jgrowl_minimized.js', 'jquery.autocomplete.min.js', 'base'
+    = stylesheet_link_tag 'reset', 'typography', 'ie', "uv/#{Page::CODE_THEME}", 'jquery.jgrowl.css', 'flora.all.css', 'jquery.autocomplete.css', 'base'
+  %body{:class => page_class}
+    %ul#notices
+      - for bucket in [ :error, :success, :notice ]
+        = notices flash[bucket], bucket.to_s
+    %h1#title
+      = link_to 'Quiki', root_path
+      %span.tagline ...get some
+    #body
+      #content
+        = yield
+      #sidebar
+        = yield :sidebar
