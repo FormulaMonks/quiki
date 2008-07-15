@@ -51,7 +51,7 @@ class Page < ActiveRecord::Base
   end
 
   def parser
-    self[:parser] || 'html'
+    self[:parser] || 'markdown'
   end
   
   def title=(title)
