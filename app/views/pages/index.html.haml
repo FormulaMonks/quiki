@@ -1,10 +1,10 @@
 %h1 Recently Updated
-%table
+%table#recent_pages
   %tr
     %th Page
     %th Updated
   - for page in @pages
-    %tr
+    %tr{ :class => happened_today?(page.updated_at) ? 'today' : 'old' }
       %td= link_to page, page
       %td= smart_datetime page.updated_at
     

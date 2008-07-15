@@ -17,10 +17,14 @@ module ApplicationHelper
   # helper to output the time since. if it's more than 1 day old it outputs the
   # time according to the given stftime format
   def smart_datetime(datetime, format=nil)
-    if datetime < 1.days.ago
-      datetime.strftime(format || DATETIME_FORMATS[:pretty_datetime])
-    else
+    if happened_today?(datetime)
       time_ago_in_words(datetime) + ' ago'
+    else
+      datetime.strftime(format || DATETIME_FORMATS[:pretty_datetime])
     end
+  end
+  
+  def happened_today?(datetime)
+    datetime > 1.days.ago
   end
 end
