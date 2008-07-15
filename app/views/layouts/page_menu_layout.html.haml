@@ -13,7 +13,11 @@
       %ul.sections.menu
         - for section in @base_sections
           %li.section
+            - form_for section do |f|
+              = f.text_field :name
             = link_to section, section, :id => section.id, :class => 'section'
+            = link_to 'E', [ :edit, section ], :class => 'edit'
+            = link_to 'D', section, :method => 'delete', :confirm => "Are you sure you want to remove #{section}? All #{section.pages.size} pages will be moved outside of any section and can then be moved elsewhere.", :class => 'destroy'
             %ul.pages{ :class => current_if(@page && section.pages.include?(@page)) }
               = render :partial => 'pages/item', :collection => section.pages
               %li.page.new

@@ -27,9 +27,15 @@ ul.menu
   :padding 0px
   :margin 0px
   li
-    :display inline
+    :display block
+    :float left
     a
       :padding 5px
+      :display block
+    p
+      :padding 5px
+      :display block
+      :margin 0px
       
 pre
   :overflow auto
@@ -48,9 +54,6 @@ h1#title
     :font-style italic
     :font-weight normal
     :color #666
-  
-ul#main_menu
-  :background-color #ccc
 
 #body
   :width 960px
@@ -81,6 +84,16 @@ h1.with_menu
   :float left
 ul.menu
   :float right
+  
+ul#main
+  :float none
+  :width 940px
+  :margin 0px auto
+  :height 28px
+  :padding 10px 10px 0px 10px
+  li
+    :display block
+    :float left
 
 // page menu ==================================================================
 #page_menu
@@ -97,6 +110,8 @@ ul.menu
   li.section
     :background-color #99f
     :border-top 1px solid #33c
+    :position relative
+    :width 250px
     a.section
       :display block
       :width 240px
@@ -108,6 +123,30 @@ ul.menu
       :margin-bottom 10px
     form.new_section
       :padding 10px
+    form.edit_section
+      :padding 2px
+      :display none
+    a.edit, a.destroy
+      :position absolute
+      :width 16px
+      :height 16px
+      :overflow hidden
+      :padding 0px
+      :top 7px
+      :text-align center
+      :display none
+      :background transparent url("/images/icons/actions.png") 0px 0px no-repeat
+      :text-indent -5000px
+    a.destroy
+      :right 5px
+      :background-position 0px -16px
+      &:hover
+        :background-position 0px 0px        
+    a.edit
+      :right 21px
+      :background-position -16px -16px
+      &:hover
+        :background-position -16px 0px
   ul.pages
     :clear both
     :margin 0px
@@ -116,6 +155,8 @@ ul.menu
       :padding 4px 10px
       :background-color #eef
       :border-bottom 1px solid #666
+      a
+        :display inline
       &.current
         :background-color #ccf
   .handle
@@ -160,13 +201,15 @@ body.pages.show
 
 #page_header
   :background-color #eee
-  :height 20px
-  :padding 10px
+  :height 30px
+  :padding 0px 10px 10px 10px
   :margin-bottom 10px
   h1
+    :padding-top 10px
     :float left
     :margin 0px
   ul.menu
+    :padding-top 5px
     :float right
   
 // parser reference ===========================================================

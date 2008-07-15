@@ -1,0 +1,10 @@
+%h1 Recently Updated
+%table
+  %tr
+    %th Page
+    %th Updated
+  - for page in @pages
+    %tr
+      %td= link_to page, page
+      %td= smart_datetime page.updated_at
+    

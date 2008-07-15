@@ -1,7 +1,59 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Page do
-  describe "creating" do    
+  describe "finding" do
+    describe "excluding home" do
+      before :each do
+        @home = Page.create! :title => 'Home'
+        @foo  = Page.create! :title => 'foo'
+      end
+      
+      it "should not include home" do
+        Page.without_home.should_not include(@home)
+      end
+    end
+    
+    describe "orphaned" do
+      before :each do
+        @section = Section.create! :name => 'foo'
+        @foo = @section.pages.add! Page.new(:title => 'foo')
+        @bar = Page.create! :title => 'bar'
+      end
+      
+      it "should not include foo" do
+        Page.orphaned.should_not include(@foo)
+      end
+    end
+    
+    describe "excluding home and orphaned" do
+      before :each do
+        @section = Section.create! :name => 'foo'
+        @home = Page.create! :title => 'Home'
+        @foo  = @section.pages.add! Page.new(:title => 'foo')
+        @bar  = Page.create! :title => 'bar'
+      end
+      
+      it "should not include foo or home" do
+        Page.orphaned.without_home.should_not include(@home)
+        Page.orphaned.without_home.should_not include(@foo)
+      end
+    end
+    
+    describe "recent" do
+      before :each do
+        @pages = []
+        %w( foo bar baz ).each do |page|
+          @pages << Page.create!(:title => page)
+        end
+      end
+      
+      it "should find pages in order of recent update" do
+        Page.recent.should eql(@pages.reverse)
+      end
+    end
+  end
+  
+  describe "creating" do
     describe "naming" do
       before :each do
         @page = Page.create! :title => 'Foo Bar Baz', :body => '*foo bar*', :parser => 'markdown'

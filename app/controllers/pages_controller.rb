@@ -6,6 +6,10 @@ class PagesController < ApplicationController
   def new
   end
   
+  def index
+    @pages = Page.recent.find(:all, :limit => 25)
+  end
+  
   def show
     redirect_to new_page_path(:page => { :path => params[:path] }) and return unless @page
   end

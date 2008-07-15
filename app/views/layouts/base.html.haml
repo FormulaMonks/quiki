@@ -10,6 +10,12 @@
     %h1#title
       = link_to 'Quiki', root_path
       %span.tagline ...get some
+    %ul#main.menu.clearfix
+      %li
+        %p Recent Changes:
+      - for page in Page.recent.find(:all, :limit => 4) do
+        %li= link_to page, page
+      %li= link_to 'More...', pages_path
     #body
       #content
         = yield

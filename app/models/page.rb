@@ -8,7 +8,7 @@ class Page < ActiveRecord::Base
   TITLE_REGEX = '[a-zA-Z_0-9 ]+'
   PATH_REGEX  = '[a-zA-Z\-_0-9]+'
   CODE_THEME  = 'blackboard'
-  @@parsers = { :markdown => RDiscount, :textile => RedCloth, :html => HtmlParser }.freeze
+  @@parsers   = { :markdown => RDiscount, :textile => RedCloth, :html => HtmlParser }.freeze
 
   belongs_to :section
   # note that CodeBlock has to be loaded before de-serialization for it to work
@@ -23,6 +23,10 @@ class Page < ActiveRecord::Base
   before_validation :render
   
   acts_as_versioned
+  
+  named_scope :without_home, :conditions => [ 'pages.path <> ?', 'Home' ]
+  named_scope :orphaned, :conditions => 'pages.section_id IS NULL'
+  named_scope :recent, :order => 'pages.updated_at DESC'
 
   class << self
     # renders the given content to html using the given parser

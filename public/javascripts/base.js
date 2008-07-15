@@ -14,7 +14,8 @@ $(function() {
 });
 
 function initialize_page_menu() {
-	$('#page_menu ul.pages li.page').draggable({
+	pages = $('#page_menu ul.pages li.page');
+	pages.draggable({
 		handle      : 'span.handle',
 		opacity     : '.8',
 		revert      : true,
@@ -24,7 +25,9 @@ function initialize_page_menu() {
 		stop        : function() {}
 	});
 	
-	$('#page_menu li.section a').droppable({
+
+	sections = $("#page_menu ul.sections li.section");
+	$('a.section', sections).droppable({
 		accept      : '#page_menu ul.pages li.page',
 		hoverClass  : 'hover',
 		drop        : function(e, ui) {
@@ -36,12 +39,22 @@ function initialize_page_menu() {
 	
 	// custom accordion functionality because the jQuery one was a bit quirky w/
 	// the linking and drag/drop
-	sections = $("#page_menu ul.sections li.section");
 	$("ul.pages", sections).hide();
 	$("ul.pages.current", sections).show();
 	$("a.section", sections).click(function() {
 		$('#page_menu ul.sections li.section ul.pages').hide();
 		$('ul.pages', $(this).parents('li.section')).show();
+		return false;
+	})
+	sections.hover(function() {
+		$('a.edit, a.destroy', this).show();
+	}, function() {
+		$('a.edit, a.destroy', this).hide();
+	});
+	$("a.edit", sections).click(function() {
+		section = $(this).parents('li.section');
+		$('form.edit_section', section).toggle();
+		$('a.section', section).toggle();
 		return false;
 	});
 
