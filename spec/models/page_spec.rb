@@ -66,7 +66,7 @@ describe Page do
     
     describe "parsing" do
       before :each do
-        @page = Page.new :title => 'foo', :body => '*foo bar*', :parser => 'markdown'
+        @page = Page.new :title => 'foo', :body => '*foo bar*'
       end
       
       it "should render the contents of the page" do
@@ -86,7 +86,7 @@ describe Page do
       end
 
       it "should render the contents of the page using html_parser" do
-        @page.parser = nil
+        @page.parser = 'html'
         @page.save!
         @page.rendered.should eql('*foo bar*')
       end
@@ -129,6 +129,26 @@ describe Page do
       it "should apply markdown outside of the the ruby section" do
         @page.save!
         @page.rendered.should =~ /<em>bing bang boom<\/em>/
+      end
+      
+      describe "with invalid syntax highlighter block" do
+        before :each do
+          @page.body += [
+            "\n-:foo",
+            "  foo",
+            "-:foo\n"
+          ].join("\n")
+        end
+        
+        it "should not raise error with invalid syntax given" do
+          lambda {
+            @page.save
+          }.should_not raise_error
+        end
+      
+        it "should not save the page with invalid syntax given" do
+          @page.save.should be_false
+        end
       end
       
       describe "with multiple code blocks and text" do
@@ -196,7 +216,6 @@ describe Page do
     
     describe "validating" do
       before :each do
-        pending "don't really care about this yet..."
         # this is built in an array to avoid extra spacing which has meaning to
         # the parser
         body = [
@@ -214,6 +233,7 @@ describe Page do
       end
       
       it "should have an error on the body about mismatched tags" do
+        @page.save
         @page.errors.on(:body).should =~ /mismatched/
       end
     end    

@@ -20,7 +20,7 @@ class Page < ActiveRecord::Base
   validates_exclusion_of  :path, :in => %w( pages sections parsers )
   validates_associated    :section, :allow_nil => true
 
-  before_validation :render
+  #before_validation :render
   
   acts_as_versioned
   
@@ -48,6 +48,11 @@ class Page < ActiveRecord::Base
     def path(title)
       title.gsub(/\s/, '-')
     end
+  end
+
+  def validate
+    # TODO: decouple rendering and parser validations
+    render
   end
 
   def parser
@@ -88,9 +93,21 @@ class Page < ActiveRecord::Base
       parts.each do |part|
         if part =~ /^\-:.*$/ # part is a code block
           syntax, code, check = part.scan(/^\-:(.*?)\n(.*\n)\-:(.*?)$/m)[0]
-          code_blocks << (block = CodeBlock.new(syntax, code))
-          body_parts << "<p class=\"code_stamp\"><span class=\"syntax\">#{syntax.humanize}</span><a href=\"/#{path}/code/#{code_blocks.length-1}\">View Source</a></p>"
-          body_parts << block.highlight(CODE_THEME)
+          if syntax == check
+            code_blocks << (block = CodeBlock.new(syntax, code))
+            body_parts << "<p class=\"code_stamp\"><span class=\"syntax\">#{syntax.humanize}</span><a href=\"/#{path}/code/#{code_blocks.length-1}\">View Source</a></p>"
+            begin
+              body_parts << block.highlight(CODE_THEME) 
+            rescue NoMethodError => e
+              if e.message =~ /nil\.parse/
+                self.errors.add(:body, "references unknown code highlighter '#{syntax}'")
+              else
+                raise e
+              end
+            end
+          else
+            self.errors.add(:body, "has mismatched code highlighter block ('#{syntax}' and '#{check}')")
+          end
         else
           body_parts << Page.render(part, parser)
         end

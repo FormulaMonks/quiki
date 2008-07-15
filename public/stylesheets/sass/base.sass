@@ -168,19 +168,20 @@ table.versions
     :background-color #afa
     
 // page edit ==================================================================
-body.pages.edit
-  form.edit_page
-    input#page_title
-      :font-weight normal
-      :font-size 2.0em
-      :width 500px
-    textarea
+body.pages
+  &.edit, &.update
+    form.edit_page
+      input#page_title
+        :font-weight normal
+        :font-size 2.0em
+        :width 500px
+      textarea
+        :margin-top 10px
+        :height 500px
+        :width 670px
+    #page_submit
+      :display block
       :margin-top 10px
-      :height 500px
-      :width 670px
-  #page_submit
-    :display block
-    :margin-top 10px
 
 // page show ==================================================================
 body.pages.show

@@ -53,7 +53,7 @@ class PagesController < ApplicationController
       else
         format.html do
           flash[:error] = @page.errors.full_messages
-          render :action => 'edit'
+          render :action => 'edit', :layout => 'pages/edit_layout.html.haml'
         end
         format.json { render :json => { :errors => @page.errors.full_messages }, :status => :unprocessable_entity }
       end
