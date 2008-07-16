@@ -5,7 +5,6 @@ end
 class Page < ActiveRecord::Base  
   attr_accessible :title, :body, :parser, :section_id
 
-  TITLE_REGEX = '[a-zA-Z_0-9 ]+'
   PATH_REGEX  = '[a-zA-Z\-_0-9]+'
   CODE_THEME  = 'blackboard'
   @@parsers   = { :markdown => RDiscount, :textile => RedCloth, :html => HtmlParser }.freeze
@@ -16,7 +15,6 @@ class Page < ActiveRecord::Base
 
   validates_presence_of   :path, :title
   validates_format_of     :path, :with => /^#{PATH_REGEX}$/
-  validates_uniqueness_of :path
   validates_exclusion_of  :path, :in => %w( pages sections parsers )
   validates_associated    :section, :allow_nil => true
 
@@ -46,11 +44,14 @@ class Page < ActiveRecord::Base
     end
     
     def path(title)
-      title.gsub(/\s/, '-')
+      title.gsub(/#{PATH_REGEX.gsub(/\[/, '[^ ')}/, '').gsub(/\s/, '-')
     end
   end
 
   def validate
+    if similar = Page.find(:first, :conditions => new_record? ? [ 'path = ?', self.path ] : [ 'path = ? AND id <> ?', self.path, self.id ])
+      self.errors.add(:title, "results in same url as #{similar}")
+    end
     # TODO: decouple rendering and parser validations
     render
   end
@@ -69,7 +70,7 @@ class Page < ActiveRecord::Base
   end
 
   def to_s
-    title
+    ERB::Util.h(title)
   end
   
   def current?(version)

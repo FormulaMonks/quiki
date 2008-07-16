@@ -53,6 +53,18 @@ describe Page do
     end
   end
   
+  describe "updating" do
+    before :each do
+      @page = Page.create! :title => 'Foo'
+    end
+    
+    it "should save page" do
+      lambda {
+        @page.save!
+      }.should_not raise_error
+    end
+  end
+  
   describe "creating" do
     describe "naming" do
       before :each do
@@ -62,8 +74,35 @@ describe Page do
       it "should use Foo-Bar-Baz for the pages path" do
         @page.path.should eql('Foo-Bar-Baz')
       end
+
+      describe "when one page has crazy characters" do
+        before :each do
+          @foo = Page.new :title => "~!@\#$%^&*()+`={}[]|\\:\"<>?;',./Foo Bar Baz"
+        end
+        
+        it "should not allow @foo to be saved" do
+          lambda {
+            @foo.save!
+          }.should raise_error
+        end
+        
+        it "should raise error about similar page" do
+          @foo.save
+          @foo.errors.on(:title).should =~ /same.*Foo Bar Baz/
+        end
+      end
     end
-    
+      
+    describe "with crazy characters in name" do
+      before :each do
+        @page = Page.create! :title => "~!@\#$%^&*()+`={}[]|\\:\"<>?;',./Foo Bar Baz"
+      end
+      
+      it "should use Foo-Bar-Baz for the pages path" do
+        @page.path.should eql('Foo-Bar-Baz')
+      end
+    end
+
     describe "parsing" do
       before :each do
         @page = Page.new :title => 'foo', :body => '*foo bar*'
@@ -236,6 +275,16 @@ describe Page do
         @page.save
         @page.errors.on(:body).should =~ /mismatched/
       end
-    end    
+    end
+    
+    describe "outputting" do
+      before :each do
+        @page = Page.create! :title => "<blink>Foo</blink>"
+      end
+      
+      it "should html escape the to_s method" do
+        @page.to_s.should eql("&lt;blink&gt;Foo&lt;/blink&gt;")
+      end
+    end
   end
 end
