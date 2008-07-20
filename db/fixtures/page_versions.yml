@@ -7,6 +7,6 @@ page_<%= i %>_version_1:
   created_at: <%= (rand(50)+1).days.ago %>
   parser: html
   version: 1
-  page: page_<%= i %>
-  section: <%= (1..10).to_a.collect{ |s| "section_#{s}" }.unshift(nil).rand %>
+  page_id: <%= Fixtures.identify("page_#{i}") %>
+  section_id: <%= Fixtures.identify((1..10).to_a.collect{ |s| "section_#{s}" }.unshift(nil).rand) %>
 <% end %>

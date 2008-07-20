@@ -7,8 +7,12 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password
   
   before_filter :initialize_page_menu
-  
+    
   protected
+    def page_options(options={})
+      { :size => 10, :current => params[:page] }.merge(options)
+    end
+  
     def initialize_page_menu
       # prefix with base_ so there's less chance of interfering with usage in
       # other controllers

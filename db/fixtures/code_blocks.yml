@@ -1,0 +1,11 @@
+<% require 'uv' %>
+<% for i in 1..100 do %>
+code_block_<%= i %>_version_1:
+  page: page_<%= rand(50)+1 %>
+  version: 1
+  language: <%= Uv.syntaxes[[0, 5, 10, 20, 30].rand] %>
+  code: hello world
+  highlighted: '<pre class="blackboard"><span class="line-numbers">   1 </span> hello world&#x000A;</pre>'
+  theme: blackboard
+  created_at: <%= rand(10).days.ago %>
+<% end %>

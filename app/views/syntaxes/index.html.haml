@@ -1,0 +1,5 @@
+#page_header
+  %h1= "Code"
+- columns_of @syntaxes, 3, :ul_options => { :class => 'syntax' } do |syntax|
+  = link_to syntax.syntax.humanize, code_blocks_path(:filter => syntax.syntax)
+  %span= "(#{syntax.count})"

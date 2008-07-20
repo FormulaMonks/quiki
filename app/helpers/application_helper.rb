@@ -27,4 +27,46 @@ module ApplicationHelper
   def happened_today?(datetime)
     datetime > 1.days.ago
   end
+  
+  def columns_of(collection, columns, options={}, &block)
+    i = 0
+    html = capture do
+      columns.times do
+        haml_tag :ul, options[:ul_options] do
+          items = collection.slice(i, collection.length < columns ? collection.length : (collection.length.to_f/columns.to_f).round)
+          if items && !items.empty?
+            for item in items do
+              haml_tag :li, capture_haml{ yield item }
+            end
+          end
+        end
+        i += collection.length < columns ? collection.length : (collection.length.to_f/columns.to_f).round
+      end
+    end
+    concat html, block.binding
+  end
+  
+  def pagination(paginator, options={})
+    haml_tag :p, :class => class_merge('pagination', options[:class]) do
+      unless paginator.page_count == 1
+        concat link_to('Previous', { :overwrite_params => { :page => paginator.previous_page } }, { :class => 'previous' }) if paginator.previous_page
+        haml_tag(:span, paginating_links(paginator, :params => params), :class => 'pages')
+        concat link_to('Next', { :overwrite_params => { :page => paginator.next_page } }, { :class => 'next' }) if paginator.next_page
+      end
+    end
+  end
+  
+  def paginating_links(paginator, options = {}, html_options = {})
+    name = options[:name] || PaginatingFind::Helpers::DEFAULT_OPTIONS[:name]
+    params = (options[:params] || PaginatingFind::Helpers::DEFAULT_OPTIONS[:params]).clone
+    
+    paginating_links_each(paginator, options) do |n|
+      params[name] = n
+      '<span class="page">' + link_to(n, params, html_options) + '</span>'
+    end
+  end
+  
+  def class_merge(klass=nil, merge=nil)
+    merge.nil? ? klass : (klass.nil? ? '' : "#{klass} ") + "#{merge}"
+  end
 end

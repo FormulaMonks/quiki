@@ -15,13 +15,15 @@ _zing zang zong_
 BODY
 
 describe CodeBlock do
-  describe "finding by type" do
+  describe "finding" do
     before :each do
       @page = Page.create! :title => 'Foo', :body => BODY
     end
     
-    it "should find 1 javascript block" do
-      CodeBlock.find('javascript').length.should be(1)
+    describe "types" do
+      it "should find all the languages used in code blocks and their associated appearance counts" do
+        CodeBlock.languages.collect{ |l| l.language }.should eql(['javascript', 'ruby'])
+      end
     end
   end
 end

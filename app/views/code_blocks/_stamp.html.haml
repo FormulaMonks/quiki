@@ -1,0 +1,3 @@
+%p.code_stamp
+  %span.syntax= code.language.humanize
+  = link_to 'View Source', page_source_path(:path => code.page.path, :id => code.id)

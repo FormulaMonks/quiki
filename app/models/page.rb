@@ -14,7 +14,7 @@ class Page < ActiveRecord::Base
 
   validates_presence_of   :path, :title
   validates_format_of     :path, :with => /^#{PATH_REGEX}$/
-  validates_exclusion_of  :path, :in => %w( pages sections parsers )
+  validates_exclusion_of  :path, :in => %w( pages sections parsers code_blocks syntaxes )
   validates_associated    :section, :allow_nil => true
 
   # the page has to have the code block ids in order to render, and the code
@@ -122,6 +122,7 @@ class Page < ActiveRecord::Base
         if body_part.is_a?(CodeBlock)
           body_part.version = next_version
           self.code_blocks << body_part
+          # TODO: render this from the Haml partial code_blocks/stamp
           self.rendered << "<p class=\"code_stamp\"><span class=\"syntax\">#{body_part.language.humanize}</span><a href=\"/#{path}/code/#{body_part.id}\">View Source</a></p>"
           self.rendered << body_part.highlighted
         else

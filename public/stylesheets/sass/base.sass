@@ -184,21 +184,9 @@ body.pages
       :margin-top 10px
 
 // page show ==================================================================
-body.pages.show, body.versions.show
+body.pages.show
   h2
     :padding 2px 0px 0px 14px
-  p.code_stamp
-    :padding 4px 10px 0px 0px
-    :margin 20px 0px 0px 0px
-    :text-align right
-    :background-color #0C1021
-    :color #eef
-    .syntax
-      :margin-right 10px
-    a
-      :color #66f
-  pre.blackboard
-    :margin 0px 0px 20px 0px
 
 #page_header
   :background-color #eee
@@ -226,3 +214,28 @@ body.pages.show, body.versions.show
   tr.today
     td
       :background-color #eee
+      
+// code blocks ================================================================
+ul#code_blocks
+  :list-style-type none
+  :margin 0px
+
+p.code_stamp
+  :padding 4px 10px 0px 0px
+  :margin 20px 0px 0px 0px
+  :text-align right
+  :background-color #0C1021
+  :color #eef
+  .syntax
+    :margin-right 10px
+  a
+    :color #66f
+pre.blackboard
+  :margin 0px 0px 20px 0px
+
+// code filter list ===========================================================
+ul.syntax
+  :list-style-type none
+  :margin 0px
+  :float left
+  :width 220px
