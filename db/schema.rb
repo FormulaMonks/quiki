@@ -9,7 +9,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080712230833) do
+ActiveRecord::Schema.define(:version => 20080718040324) do
+
+  create_table "code_blocks", :force => true do |t|
+    t.integer  "page_id"
+    t.integer  "version"
+    t.string   "language"
+    t.text     "code"
+    t.text     "highlighted"
+    t.string   "theme"
+    t.datetime "created_at"
+  end
+
+  add_index "code_blocks", ["created_at"], :name => "index_code_blocks_on_created_at"
+  add_index "code_blocks", ["language"], :name => "index_code_blocks_on_language"
+  add_index "code_blocks", ["page_id"], :name => "index_code_blocks_on_page_id"
+  add_index "code_blocks", ["version"], :name => "index_code_blocks_on_version"
 
   create_table "page_versions", :force => true do |t|
     t.integer  "page_id"
@@ -21,23 +36,21 @@ ActiveRecord::Schema.define(:version => 20080712230833) do
     t.datetime "updated_at"
     t.string   "parser"
     t.integer  "section_id"
-    t.text     "code_blocks"
-    t.string   "title",       :null => false
+    t.string   "title",      :null => false
   end
 
   add_index "page_versions", ["section_id"], :name => "index_page_versions_on_section_id"
 
   create_table "pages", :force => true do |t|
-    t.string   "path",                       :null => false
+    t.string   "path",                      :null => false
     t.text     "body"
     t.text     "rendered"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "parser"
-    t.integer  "version",     :default => 0, :null => false
+    t.integer  "version",    :default => 0, :null => false
     t.integer  "section_id"
-    t.text     "code_blocks"
-    t.string   "title",                      :null => false
+    t.string   "title",                     :null => false
   end
 
   add_index "pages", ["path"], :name => "index_pages_on_path"

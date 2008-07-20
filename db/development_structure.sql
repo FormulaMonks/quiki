@@ -22,6 +22,41 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: code_blocks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE code_blocks (
+    id integer NOT NULL,
+    page_id integer,
+    version integer,
+    "language" character varying(255),
+    code text,
+    highlighted text,
+    theme character varying(255),
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: code_blocks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE code_blocks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: code_blocks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE code_blocks_id_seq OWNED BY code_blocks.id;
+
+
+--
 -- Name: page_versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -36,7 +71,6 @@ CREATE TABLE page_versions (
     updated_at timestamp without time zone,
     parser character varying(255),
     section_id integer,
-    code_blocks text,
     title character varying(255) NOT NULL
 );
 
@@ -74,7 +108,6 @@ CREATE TABLE pages (
     parser character varying(255),
     version integer DEFAULT 0 NOT NULL,
     section_id integer,
-    code_blocks text,
     title character varying(255) NOT NULL
 );
 
@@ -140,6 +173,13 @@ ALTER SEQUENCE sections_id_seq OWNED BY sections.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE code_blocks ALTER COLUMN id SET DEFAULT nextval('code_blocks_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE page_versions ALTER COLUMN id SET DEFAULT nextval('page_versions_id_seq'::regclass);
 
 
@@ -155,6 +195,14 @@ ALTER TABLE pages ALTER COLUMN id SET DEFAULT nextval('pages_id_seq'::regclass);
 --
 
 ALTER TABLE sections ALTER COLUMN id SET DEFAULT nextval('sections_id_seq'::regclass);
+
+
+--
+-- Name: code_blocks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY code_blocks
+    ADD CONSTRAINT code_blocks_pkey PRIMARY KEY (id);
 
 
 --
@@ -179,6 +227,34 @@ ALTER TABLE ONLY pages
 
 ALTER TABLE ONLY sections
     ADD CONSTRAINT sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_code_blocks_on_created_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_code_blocks_on_created_at ON code_blocks USING btree (created_at);
+
+
+--
+-- Name: index_code_blocks_on_language; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_code_blocks_on_language ON code_blocks USING btree ("language");
+
+
+--
+-- Name: index_code_blocks_on_page_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_code_blocks_on_page_id ON code_blocks USING btree (page_id);
+
+
+--
+-- Name: index_code_blocks_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_code_blocks_on_version ON code_blocks USING btree (version);
 
 
 --
@@ -224,3 +300,5 @@ INSERT INTO schema_migrations (version) VALUES ('20080710215125');
 INSERT INTO schema_migrations (version) VALUES ('20080712210113');
 
 INSERT INTO schema_migrations (version) VALUES ('20080712230833');
+
+INSERT INTO schema_migrations (version) VALUES ('20080718040324');

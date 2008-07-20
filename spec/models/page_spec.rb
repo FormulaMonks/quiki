@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+BODY = <<-BODY
+*foo bar baz*
+-:ruby
+10000000000000.times do
+  puts '*foo bar*'
+end
+-:ruby
+*bing bang boom*
+-:javascript
+console.info('Hello World');
+-:javascript
+_blah blah blah_
+BODY
+
+
 describe Page do
   describe "finding" do
     describe "excluding home" do
@@ -55,7 +70,8 @@ describe Page do
   
   describe "updating" do
     before :each do
-      @page = Page.create! :title => 'Foo'
+      @page = Page.create! :title => 'Foo', :body => BODY
+      @page.reload
     end
     
     it "should save page" do
@@ -63,9 +79,39 @@ describe Page do
         @page.save!
       }.should_not raise_error
     end
+    
+    it "should only have two code blocks" do
+      @page.save!
+      @page.reload.code_blocks.size.should be(2)
+    end
+    
+    it "should not have deleted the old code blocks" do
+      @page.save!
+      CodeBlock.count(:all).should be(4)
+    end
+    
+    it "should have attached the older code blocks to previous version" do
+      @page.save!
+      @page.versions.find_by_version(1).code_blocks.length.should be(2)
+    end
+    
+    it "should have 2 versions" do
+      @page.save!
+      Page::Version.count(:all).should be(2)
+    end    
   end
   
   describe "creating" do
+    describe "with versions" do
+      before :each do
+        @page = Page.create! :title => 'Foo Bar Baz', :body => BODY
+      end
+      
+      it "should only save 1 version of the page" do
+        @page.reload.versions.length.should be(1)
+      end
+    end
+    
     describe "naming" do
       before :each do
         @page = Page.create! :title => 'Foo Bar Baz', :body => '*foo bar*', :parser => 'markdown'
@@ -131,7 +177,7 @@ describe Page do
       end
       
       it "should only render once" do
-        @page.should_receive(:render).once
+        @page.should_receive(:render).twice
         @page.save!
       end
     end
@@ -195,21 +241,7 @@ describe Page do
         end
 
         def body
-          # this is built in an array to avoid extra spacing which has meaning to
-          # the parser
-          [
-            "*foo bar baz*",
-            "-:ruby",
-            "10000000000000.times do",
-            "  puts '*foo bar*'",
-            "end",
-            "-:ruby",
-            "*bing bang boom*",
-            "-:javascript",
-            "console.info('Hello World');",
-            "-:javascript",
-            "_blah blah blah_"
-          ].join("\n")
+          BODY
         end
 
         it "should render the starting text" do
@@ -235,20 +267,6 @@ describe Page do
         it "should render the trailing text" do
           @page.save!
           @page.rendered.should =~ /<em>blah blah blah<\/em>/
-        end
-        
-        describe "accessing code source" do
-          it "should return the ruby block" do
-            @page.save!
-            @page.reload
-            @page.code_blocks[0].language.should eql('ruby')
-          end
-
-          it "should return the javascript block" do
-            @page.save!
-            @page.reload
-            @page.code_blocks[1].language.should eql('javascript')
-          end
         end
       end
     end

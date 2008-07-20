@@ -40,7 +40,7 @@ class PagesController < ApplicationController
     if params[:page][:version]
       @page.revert_to params[:page][:version]
     else
-      @page.update_attributes params[:page]
+      @page.attributes = params[:page]
     end
 
     respond_to do |format|

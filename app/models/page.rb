@@ -1,4 +1,4 @@
-%w( rdiscount redcloth html_parser acts_as_versioned code_block ).each do |requirement|
+%w( rdiscount redcloth html_parser acts_as_versioned ).each do |requirement|
   require requirement
 end
 
@@ -10,22 +10,30 @@ class Page < ActiveRecord::Base
   @@parsers   = { :markdown => RDiscount, :textile => RedCloth, :html => HtmlParser }.freeze
 
   belongs_to :section
-  # note that CodeBlock has to be loaded before de-serialization for it to work
-  serialize :code_blocks
+  has_many :code_blocks, :conditions => 'code_blocks.version = #{self.version}'
 
   validates_presence_of   :path, :title
   validates_format_of     :path, :with => /^#{PATH_REGEX}$/
   validates_exclusion_of  :path, :in => %w( pages sections parsers )
   validates_associated    :section, :allow_nil => true
 
-  #before_validation :render
+  # the page has to have the code block ids in order to render, and the code
+  # blocks can't be saved for a new page before saving the page, so saving a
+  # new page results in 2 saves: 1 to save the page and 1 to render and save
+  # again
+  before_save  :render
+  after_create :save # 2nd save will call render
   
   acts_as_versioned
+  # force open the dynamic Page::Version class created by acts_as_versioned
+  class Version < ActiveRecord::Base
+    has_many :code_blocks, :finder_sql => 'SELECT * FROM code_blocks WHERE code_blocks.version = #{self.version} AND code_blocks.page_id = #{self.page_id}'
+  end
   
   named_scope :without_home, :conditions => [ 'pages.path <> ?', 'Home' ]
   named_scope :orphaned, :conditions => 'pages.section_id IS NULL'
   named_scope :recent, :order => 'pages.updated_at DESC'
-
+  
   class << self
     # renders the given content to html using the given parser
     def render(content, parser)
@@ -46,14 +54,22 @@ class Page < ActiveRecord::Base
     def path(title)
       title.gsub(/#{PATH_REGEX.gsub(/\[/, '[^ ')}/, '').gsub(/\s/, '-')
     end
+    
+    def parse_code_blocks(content)
+      parts = content.scan /(.*?)\n(\-:.*?\n.*?\n\-:.*?)\n(.*)/m
+      parts.empty? ? [content] : [parts[0][0], parts[0][1]] + parse_code_blocks(parts[0][2])
+    end
   end
 
   def validate
     if similar = Page.find(:first, :conditions => new_record? ? [ 'path = ?', self.path ] : [ 'path = ? AND id <> ?', self.path, self.id ])
       self.errors.add(:title, "results in same url as #{similar}")
     end
-    # TODO: decouple rendering and parser validations
-    render
+    # TODO: decouple parsing and validations
+    parse
+    @body_parts.each do |part|     
+      part.errors.each { |method, message| self.errors.add(:body, message) } if part.is_a?(CodeBlock) && !part.valid?
+    end
   end
 
   def parser
@@ -77,44 +93,42 @@ class Page < ActiveRecord::Base
     version.version == self.version
   end
   
-  private
-    def parse_code_blocks(content)
-      parts = content.scan /(.*?)\n(\-:.*?\n.*?\n\-:.*?)\n(.*)/m
-      parts.empty? ? [content] : [parts[0][0], parts[0][1]] + parse_code_blocks(parts[0][2])
-    end
-  
-    def render
-      return self.rendered = '' if body.nil?
-      
-      body_parts  = [] # haha...get it?
-      code_blocks = []
-      stripped    = body.dup.gsub(/\r\n/, "\n") # strip carriage returns
-      parts       = parse_code_blocks stripped
-      
-      parts.each do |part|
+  protected
+    def parse
+      @body_parts = []
+
+      return nil if body.nil?      
+
+      Page.parse_code_blocks(body.dup.gsub(/\r\n/, "\n")).each do |part|
         if part =~ /^\-:.*$/ # part is a code block
           syntax, code, check = part.scan(/^\-:(.*?)\n(.*\n)\-:(.*?)$/m)[0]
           if syntax == check
-            code_blocks << (block = CodeBlock.new(syntax, code))
-            body_parts << "<p class=\"code_stamp\"><span class=\"syntax\">#{syntax.humanize}</span><a href=\"/#{path}/code/#{code_blocks.length-1}\">View Source</a></p>"
-            begin
-              body_parts << block.highlight(CODE_THEME) 
-            rescue NoMethodError => e
-              if e.message =~ /nil\.parse/
-                self.errors.add(:body, "references unknown code highlighter '#{syntax}'")
-              else
-                raise e
-              end
-            end
+            @body_parts << CodeBlock.new(:code => code, :language => syntax, :theme => CODE_THEME)
           else
             self.errors.add(:body, "has mismatched code highlighter block ('#{syntax}' and '#{check}')")
           end
         else
-          body_parts << Page.render(part, parser)
+          @body_parts << part
+        end
+      end
+    end
+
+    def render
+      return self.rendered = '' if new_record? || body.nil?
+
+      self.rendered = []
+
+      @body_parts.each do |body_part|
+        if body_part.is_a?(CodeBlock)
+          body_part.version = next_version
+          self.code_blocks << body_part
+          self.rendered << "<p class=\"code_stamp\"><span class=\"syntax\">#{body_part.language.humanize}</span><a href=\"/#{path}/code/#{body_part.id}\">View Source</a></p>"
+          self.rendered << body_part.highlighted
+        else
+          self.rendered << Page.render(body_part, parser)
         end
       end
       
-      self.code_blocks = code_blocks
-      self.rendered = body_parts.join
+      self.rendered = self.rendered.join("\n")
     end
 end
