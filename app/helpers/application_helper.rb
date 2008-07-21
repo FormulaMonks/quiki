@@ -30,7 +30,7 @@ module ApplicationHelper
   
   def columns_of(collection, columns, options={}, &block)
     i = 0
-    html = capture do
+    html = capture_haml do
       columns.times do
         haml_tag :ul, options[:ul_options] do
           items = collection.slice(i, collection.length < columns ? collection.length : (collection.length.to_f/columns.to_f).round)
@@ -68,5 +68,15 @@ module ApplicationHelper
   
   def class_merge(klass=nil, merge=nil)
     merge.nil? ? klass : (klass.nil? ? '' : "#{klass} ") + "#{merge}"
+  end
+  
+  def menu_item(title, url, selected=false, options={}, &block)
+    options.reverse_merge!(:li_options => {}, :link_options => {})
+    options[:li_options][:class] = class_merge(options[:li_options][:class], (selected ? 'selected' : nil))
+    text = block_given? ? capture(&block) : ''
+    tag = capture do
+      haml_tag(:li, link_to(title, url, options[:link_options]) + text, options[:li_options])
+    end
+    block_given? ? concat(tag, block.binding) : tag
   end
 end

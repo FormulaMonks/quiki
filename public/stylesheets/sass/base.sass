@@ -29,6 +29,8 @@ ul.menu
   li
     :display block
     :float left
+    &.selected
+      :background-color #fff
     a
       :padding 5px
       :display block
@@ -36,6 +38,9 @@ ul.menu
       :padding 5px
       :display block
       :margin 0px
+  &.pagination
+    a
+      :display inline
       
 pre
   :overflow auto
@@ -84,8 +89,13 @@ h1.with_menu
   :float left
 ul.menu
   :float right
-  
+
 ul#main
+  :position absolute
+  :right 0px
+  :top 28px
+  
+ul#recent_changes
   :float none
   :width 940px
   :margin 0px auto
@@ -219,6 +229,12 @@ body.pages.show
 ul#code_blocks
   :list-style-type none
   :margin 0px
+  p.source
+    :float right
+  pre
+    :margin 0px
+  li
+    :clear both
 
 p.code_stamp
   :padding 4px 10px 0px 0px
@@ -232,6 +248,9 @@ p.code_stamp
     :color #66f
 pre.blackboard
   :margin 0px 0px 20px 0px
+  
+ul#popular_syntaxes
+  +clearfix
 
 // code filter list ===========================================================
 ul.syntax

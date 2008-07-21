@@ -1,6 +1,10 @@
 class CodeBlocksController < ApplicationController
   def index
-    @code_blocks = CodeBlock.current.find :all, :conditions => [ 'code_blocks.language = ?', filter ], :page => page_options
+    @code_blocks = CodeBlock.current.find :all, :conditions => [ 'code_blocks.language = ?', filter ], :order => 'code_blocks.created_at DESC', :page => page_options
+    
+    respond_to do |format|
+      format.html {}
+    end
   end
   
   def show
@@ -9,7 +13,7 @@ class CodeBlocksController < ApplicationController
   end
   
   def filter
-    params[:filter]
+    params[:filter] || CodeBlock.syntaxes(:first, :order => 'cnt DESC').syntax
   end
   helper_method :filter
 end

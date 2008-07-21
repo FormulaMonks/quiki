@@ -1,15 +1,15 @@
 #page_header
-  %h1= "Code: #{filter}"
-  %ul.menu
-    - for syntax in CodeBlock.syntaxes(:limit => 3)
-      %li
-        = link_to syntax.syntax.humanize, code_blocks_path(:filter => syntax.syntax)
-        %span.count= "(#{syntax.count})"
-    %li= link_to 'More...', syntaxes_path
-= pagination @code_blocks
+  %h1= "Code: #{filter.humanize}"
+  %ul.menu.pagination
+    %li= pagination @code_blocks
+%ul#popular_syntaxes.menu
+  - for syntax in CodeBlock.syntaxes(:all, :limit => 5)
+    %li= link_to "#{syntax.syntax.humanize} (#{syntax.count})", code_blocks_path(:filter => syntax.syntax)
+  %li= link_to 'More...', syntaxes_path
 %ul#code_blocks
   - for code_block in @code_blocks
     %li
       = render :partial => 'stamp', :locals => { :code => code_block }
       =preserve code_block.highlighted
+      %p.source= link_to code_block.page, page_path(code_block.page)
 = pagination @code_blocks

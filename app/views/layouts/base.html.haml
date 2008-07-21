@@ -10,7 +10,10 @@
     %h1#title
       = link_to 'Quiki', root_path
       %span.tagline ...get some
-    %ul#main.menu.clearfix
+    %ul#main.menu
+      = menu_item 'Pages', pages_path, controller.is_a?(PagesController)
+      = menu_item 'Code', code_blocks_path, [ CodeBlocksController, SyntaxesController ].include?(controller.class)
+    %ul#recent_changes.menu
       %li
         %p Recent Changes:
       - for page in Page.recent.find(:all, :limit => 4) do

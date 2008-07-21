@@ -1,5 +1,5 @@
 class SyntaxesController < ApplicationController
   def index
-    @syntaxes = CodeBlock.syntaxes :order => 'language ASC'
+    @syntaxes = CodeBlock.syntaxes :all, :order => 'language ASC'
   end
 end

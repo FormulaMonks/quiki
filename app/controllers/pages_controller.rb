@@ -8,6 +8,11 @@ class PagesController < ApplicationController
   
   def index
     @pages = Page.recent.find(:all, :limit => 25)
+    
+    respond_to do |format|
+      format.tab  { render :partial => 'pages/page_menu.html.haml', :layout => false }
+      format.html {}
+    end
   end
   
   def show

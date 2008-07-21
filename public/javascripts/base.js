@@ -3,14 +3,24 @@ $(function() {
 		$.jGrowl($(this).html());
 	});
 	
-	initialize_page_menu();	
-	
 	$("select#page_parser").change(function() {
 		$.getJSON('/parsers/' + $(this).val(), function(json) {
 			$("#parser_reference .reference").html(json.html);
 			$("#parser_reference h3").html(json.parser);
 		});
 	});
+
+	initialize_page_menu();
+
+	// $("ul#sidebar_menu a").tabify();
+	// $("ul#sidebar_menu").tabs({
+	// 	load : function(ui) {
+	// 		switch(ui.tab.id) {
+	// 			case 'pages_tab':initialize_page_menu();break;
+	// 			case 'code_tab':initialize_code_menu();break;
+	// 		}
+	// 	}
+	// });
 });
 
 function initialize_page_menu() {
@@ -70,3 +80,20 @@ function initialize_page_menu() {
 		location.href = '/' + data[0].replace(/^.*?\|(.*)$/, "$1");
 	});
 };
+
+// tacks the given format onto the given URL, i.e.
+//   formatify('http://www.example.com/pages?page=mypage', 'json') => 'http://www.example.com/pages.json?page=mypage'
+function formatify(url, format) {
+  return url.replace(/^([^\?#]*)(.*)$/, "$1." + format + "$2");
+}
+
+// tacks .tab onto the the given URL
+function tabify(url) {
+  return formatify(url, 'tab');
+}
+
+// tacks .tab onto the hrefs of the given jQUery objects
+jQuery.fn.tabify = function() {
+  this.each(function() { this.href = tabify(this.href); });
+  return this;
+}
