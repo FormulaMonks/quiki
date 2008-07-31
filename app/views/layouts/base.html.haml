@@ -8,8 +8,8 @@
       - for bucket in [ :error, :success, :notice ]
         = notices flash[bucket], bucket.to_s
     %h1#title
-      = link_to 'Quiki', root_path
-      %span.tagline ...get some
+      = link_to site_config(:header), root_path
+      %span.tagline= site_config :byline
     %ul#main.menu
       = menu_item 'Pages', pages_path, controller.is_a?(PagesController)
       = menu_item 'Code', code_blocks_path, [ CodeBlocksController, SyntaxesController ].include?(controller.class)

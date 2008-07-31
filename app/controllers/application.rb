@@ -8,6 +8,11 @@ class ApplicationController < ActionController::Base
   
   before_filter :initialize_page_menu
     
+  def site_config(key)
+    SITE_CONFIG[key.to_s]
+  end
+  helper_method :site_config
+    
   protected
     def page_options(options={})
       { :size => 10, :current => params[:page] }.merge(options)

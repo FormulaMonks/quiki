@@ -1,0 +1,13 @@
+defaults: &defaults
+  header: Quiki
+  byline: ...get some!
+development:
+  <<: *defaults
+benchmarking:
+  <<: *defaults
+staging:
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults
