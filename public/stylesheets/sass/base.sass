@@ -1,18 +1,18 @@
+// http://wonderfullyflawed.com/2008/05/21/clearfix-as-mixin/
 =clearfix
-  display: inline-block
+  *display: inline-block
   &:after
-    content: "."
+    content: " "
     display: block
     height: 0
     clear: both
     visibility: hidden
-  * html &
-    height: 1px
 
 body
   :text-align left
   :padding 0px
   :font-family "Segoe UI","Lucida Grande",Arial,sans-serif
+  :background-color #f6f6f6
   
 label
   :display block
@@ -51,9 +51,10 @@ pre
 
 h1#title
   :font-weight bold
-  :background-color #ccc
   :padding 10px
   :margin 0px
+  a
+    :text-decoration none
   .tagline
     :font-size 0.4em
     :font-style italic
@@ -64,47 +65,76 @@ h1#title
   :width 960px
   :margin 0px auto
 
-#content
-  :float left
+#footer
+  :text-align right
   :padding 10px
-  // 960px - 250px sidebar - 20px padding on sidebar - 20px padding on content = 670px
-  :width 670px
+  :font-size 10px
+  a
+    :color #666
+    :text-decoration none
+  #love
+    :line-height 10px
+
+#wrapper
+  :padding-bottom 16px
+  :margin-bottom 20px
+  +clearfix
+
+#content_area
+  // 960px - 250px sidebar - 20px padding on sidebar = 690px
+  :width 690px
+  :float left
+
+ul#recent_changes
+  :background #fff url("/images/decor/header-corner-left.gif") 0px 0px no-repeat
+  :padding 10px
+  :height 28px
+  :float none
+  li
+    :display block
+    :float left
+  
+#content
+  :padding 0px 10px 10px 10px
+  :background #fff url("/images/decor/header-corner-bottom.gif") bottom right no-repeat
   h1
     :font-size 20px
+    :margin 0px 0px 10px 0px
+    :padding 10px
+    :font-weight bold
   h2
     :font-size 17px
   h3
     :font-size 15px
-  h1, h2, h3, h4, h5, h6
+  h2, h3, h4, h5, h6
     :font-weight bold
     :padding 0px
     :margin 10px 0px
+  #header
+    :background-color #eee
 
 #sidebar
   :float left
   :width 250px
-  :padding 10px
+  :padding 0px 10px 10px 10px
+  #header
+    :padding-top 10px
+    :height 20px
+    :border-bottom 1px solid #aaa
+    :padding-bottom 15px
+    :padding-top 14px
+    :margin-bottom 10px
   
-h1.with_menu
+.with_menu
   :float left
 ul.menu
   :float right
 
 ul#main
   :position absolute
-  :right 0px
+  :left 650px
   :top 28px
-  
-ul#recent_changes
-  :float none
-  :width 940px
-  :margin 0px auto
-  :height 28px
-  :padding 10px 10px 0px 10px
-  li
-    :display block
-    :float left
-    
+      
 p img
   :float none
 
@@ -120,22 +150,28 @@ p img
     :display block
   .textfield
     :width 170px
+  a#new_section_trigger
+    :outline none
+  form#new_section
+    :padding 5px
+  input#section_name
+    :width 162px
   li.section
-    :background-color #99f
-    :border-top 1px solid #33c
+    //:background-color #99f
+    //:border-top 1px solid #33c
     :position relative
     :width 250px
     a.section
       :display block
       :width 240px
       :padding 5px
-      :background-color #99f
+      :font-weight bold
+      :outline none
+      //:background-color #99f
       &.hover
         :background-color #ccf
     &.empty
       :margin-bottom 10px
-    form.new_section
-      :padding 10px
     form.edit_section
       :padding 2px
       :display none
@@ -165,13 +201,17 @@ p img
     :margin 0px
     li.page
       :width 230px
-      :padding 4px 10px
-      :background-color #eef
-      :border-bottom 1px solid #666
+      :padding 2px 10px
+      //:background-color #eef
+      //:border-bottom 1px solid #666
       a
         :display inline
       &.current
-        :background-color #ccf
+        //:background-color #fff
+      form#new_page
+        #page_title
+          :margin-left 13px
+          :width 160px
   .handle
     :cursor pointer
 
@@ -185,13 +225,12 @@ body.pages
   &.edit, &.update
     form.edit_page
       input#page_title
-        :font-weight normal
-        :font-size 2.0em
-        :width 500px
+        :width 400px
+        :margin-top 8px
       textarea
         :margin-top 10px
         :height 500px
-        :width 670px
+        :width 668px
     #page_submit
       :display block
       :margin-top 10px
@@ -201,8 +240,9 @@ body.pages.show
   h2
     :padding 2px 0px 0px 14px
 
-#page_header
-  :background-color #eee
+// yeah yeah...element called header isn't very semantic, but it made my life
+// easier...
+#header
   :height 30px
   :padding 0px 10px 10px 10px
   :margin-bottom 10px

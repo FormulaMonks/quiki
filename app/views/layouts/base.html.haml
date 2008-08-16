@@ -7,20 +7,24 @@
     %ul#notices
       - for bucket in [ :error, :success, :notice ]
         = notices flash[bucket], bucket.to_s
-    %h1#title
-      = link_to site_config(:header), root_path
-      %span.tagline= site_config :byline
-    %ul#main.menu
-      = menu_item 'Pages', pages_path, controller.is_a?(PagesController)
-      = menu_item 'Code', code_blocks_path, [ CodeBlocksController, SyntaxesController ].include?(controller.class)
-    %ul#recent_changes.menu
-      %li
-        %p Recent Changes:
-      - for page in Page.recent.find(:all, :limit => 4) do
-        %li= link_to page, page
-      %li= link_to 'More...', pages_path
     #body
-      #content
-        = yield
+      %h1#title
+        = link_to site_config(:header), root_path
+      %ul#main.menu
+        = menu_item 'Pages', pages_path, controller.is_a?(PagesController)
+        = menu_item 'Code', code_blocks_path, [ CodeBlocksController, SyntaxesController ].include?(controller.class)
+      #content_area
+        %ul#recent_changes.menu
+          %li
+            %p Recent Changes:
+          - for page in Page.recent.find(:all, :limit => 4) do
+            %li= link_to page, page
+          %li= link_to 'More...', pages_path
+        #content
+          = yield
+        #footer
+          = link_to 'quiki', 'http://github.com/citrusbyte/quiki', :id => 'quiki_link'
+          %span#love &#x2665;'s
+          = link_to 'citrusbyte', 'http://www.citrusbyte.com/'
       #sidebar
         = yield :sidebar

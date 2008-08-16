@@ -99,6 +99,17 @@ class Page < ActiveRecord::Base
 
       return nil if body.nil?      
 
+      # Page.parse_dot_blocks(body.dup.gsub(/\r\n/, "\n")).each do |part|
+      #   if part =~ /^::.*$/ # part is a DOT block
+      #     dot, check = part.scan(/^::\n(.*\n)::(.*?)$/m)[0]
+      #     if check
+      #       @body_parts << DotBlock.new(:dot => dot)
+      #     else
+      #       self.errors.add(:body, "has unclosed DOT block")
+      #     end
+      #   end
+      # end
+
       Page.parse_code_blocks(body.dup.gsub(/\r\n/, "\n")).each do |part|
         if part =~ /^\-:.*$/ # part is a code block
           syntax, code, check = part.scan(/^\-:(.*?)\n(.*\n)\-:(.*?)$/m)[0]

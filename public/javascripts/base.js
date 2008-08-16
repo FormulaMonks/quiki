@@ -21,6 +21,10 @@ $(function() {
 	// 		}
 	// 	}
 	// });
+	
+	// easter-egg :)
+	var loved = false;
+	$("#love").love();
 });
 
 function initialize_page_menu() {
@@ -72,14 +76,34 @@ function initialize_page_menu() {
 	pages = new Array();
 	$('#page_menu li.page a').each(function(i) {
 		pages[i] = $(this).html().replace(/^(.*?)<.*$/, "$1") + '|' + this.href.replace(/^.*:\/\/.*?\/(.+)$/, "$1");
-	});
+	})
+	$('#page_menu li.page').hover(
+		function() { $('span.handle', this).vshow(); }, 
+		function() { $('span.handle', this).vhide(); }
+	);
+	$('#page_menu li.page span.handle').vhide();
 	
 	$("#page_menu #page_search").autocomplete(pages, {
 		formatItem : function(row, index, total, q) { return row[0].replace(/^(.*)\|.*$/, "$1"); }
 	}).result(function(e, data, formatted) {
 		location.href = '/' + data[0].replace(/^.*?\|(.*)$/, "$1");
 	});
+	
+	$('#page_menu a#new_section_trigger').next().hide();
+	$('#page_menu a#new_section_trigger').click(function() { 
+		$(this).hide();
+		$(this).next().toggle();
+		return false; 
+	});
 };
+
+jQuery.fn.vshow = function() {
+	this.css({ visibility: 'visible' });
+}
+
+jQuery.fn.vhide = function() {
+	this.css({ visibility: 'hidden' });
+}
 
 // tacks the given format onto the given URL, i.e.
 //   formatify('http://www.example.com/pages?page=mypage', 'json') => 'http://www.example.com/pages.json?page=mypage'
@@ -96,4 +120,19 @@ function tabify(url) {
 jQuery.fn.tabify = function() {
   this.each(function() { this.href = tabify(this.href); });
   return this;
+}
+
+jQuery.fn.love = function() {
+	this.hover(
+		function(){ loved = true;pulsate(); },
+		function(){ loved = false;$(this).css({ 'font-size': '10px' }); }
+	);
+}
+
+function pulsate() {
+	if(loved) {
+		$('#love').css({ 'font-size': '12px' });
+		setTimeout("$('#love').css({ 'font-size': '10px' })", 500);
+		setTimeout('pulsate()', 800);
+	}
 }
