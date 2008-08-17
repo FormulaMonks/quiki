@@ -28,31 +28,35 @@ console.info('Hello World');
 _blah blah blah_
 ::
 graph ER {
-  node [shape=box]; course; institute; student;
-  node [shape=ellipse]; {node [label="name"] name0; name1; name2;}
-  code; grade; number;
-  node [shape=diamond,style=filled,color=lightgrey]; "C-I"; "S-C"; "S-I";
-
-  name0 -- course;
-  code -- course;
-  course -- "C-I" [label="n",len=1.00];
-  "C-I" -- institute [label="1",len=1.00];
-  institute -- name1;
-  institute -- "S-I" [label="1",len=1.00];
-  "S-I" -- student [label="n",len=1.00];
-  student -- grade;
-  student -- name2;
-  student -- number;
-  student -- "S-C" [label="m",len=1.00];
-  "S-C" -- course [label="n",len=1.00];
-
-  label = "\n\nEntity Relation Diagram\ndrawn by NEATO";
   fontsize=20;
 }
 ::
 -blahdy blah blah
 DOTBODY
 
+DOT_BODY_ALONE = <<-DOTBODYALONE
+*foo bar baz*
+::
+graph ER {
+  fontsize=20;
+}
+::
+_blah blah blah_
+DOTBODYALONE
+
+DOT_BEFORE_CODE = <<-DOTBEFORECODE
+*foo bar baz*
+::
+graph ER {
+  fontsize=20;
+}
+::
+*bing bang boom*
+-:javascript
+console.info('Hello World');
+-:javascript
+_blah blah blah_
+DOTBEFORECODE
 
 describe Page do
   describe "finding" do
@@ -275,37 +279,99 @@ describe Page do
         end
       end
       
-      describe "with multiple code blocks and text" do
+      # TODO: run the whole suite for BODY and DOT_BODY
+      [ 'BODY', 'DOT_BODY' ].each do |body|
+        describe "with multiple code blocks in #{body} and text" do
+          before :each do
+            DotBlock.stub!(:new).and_return(@dot_block = mock_model(DotBlock, :render! => 'foo.png'))
+            @page.body = body.constantize
+          end
+
+          it "should render the starting text" do
+            @page.save!
+            @page.rendered.should =~ /<em>foo bar baz<\/em>/
+          end
+
+          it "should highlight the ruby section" do
+            @page.save!
+            @page.rendered.should =~ /<pre class=.*?>.*10000000000000.*<\/pre>/m
+          end
+
+          it "should render the middle text" do
+            @page.save!
+            @page.rendered.should =~ /<em>bing bang boom<\/em>/
+          end
+
+          it "should highlight the javascript section" do
+            @page.save!
+            @page.rendered.should =~ /<pre class=.*?>.*console.*<\/pre>/m
+          end
+
+          it "should render the trailing text" do
+            @page.save!
+            @page.rendered.should =~ /<em>blah blah blah<\/em>/
+          end
+        end
+      end
+      
+      describe "with DOT code block" do
         before :each do
+          DotBlock.stub!(:new).and_return(@dot_block = mock_model(DotBlock, :render! => 'foo.png'))
+          @page.body = DOT_BODY
         end
-
-        def body
-          BODY
-        end
-
-        it "should render the starting text" do
+        
+        it "should not show the DOT code in the output" do
           @page.save!
+          @page.rendered.should_not =~ /::/
+        end
+        
+        it "should create a new DOT block for DOT code" do
+          DotBlock.should_receive(:new).any_number_of_times.and_return(@dot_block)
+          @page.save!
+        end
+        
+        it "should render! the DOT block" do
+          @dot_block.should_receive(:render!).and_return('foo.png')
+          @page.save!
+        end
+        
+        it "should embed image" do
+          @page.save!
+          @page.rendered.should =~ /<img src=\"foo.png\" \/>/
+        end
+      end
+      
+      describe "with only DOT code block" do
+        before :each do
+          DotBlock.stub!(:new).and_return(@dot_block = mock_model(DotBlock, :render! => 'foo.png'))
+          @page.body = body
+          @page.save!
+        end
+        
+        def body
+          DOT_BODY_ALONE
+        end
+        
+        it "should render the starting text" do
           @page.rendered.should =~ /<em>foo bar baz<\/em>/
         end
 
-        it "should highlight the ruby section" do
-          @page.save!
-          @page.rendered.should =~ /<pre class=.*?>.*10000000000000.*<\/pre>/m
+        it "should render the DOT block" do
+          @page.rendered.should =~ /<img src.*?\/>/
         end
 
-        it "should render the middle text" do
-          @page.save!
-          @page.rendered.should =~ /<em>bing bang boom<\/em>/
-        end
-
-        it "should highlight the javascript section" do
-          @page.save!
-          @page.rendered.should =~ /<pre class=.*?>.*console.*<\/pre>/m
-        end
-
-        it "should render the trailing text" do
-          @page.save!
+        it "should render the ending text" do
           @page.rendered.should =~ /<em>blah blah blah<\/em>/
+        end
+        
+        describe "with code after DOT block" do
+          def body
+            DOT_BEFORE_CODE
+          end
+
+          it "should render the code block" do
+            @page.rendered.should =~ /<pre class=.*?>.*console.*<\/pre>/m
+          end
         end
       end
     end

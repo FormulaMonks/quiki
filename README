@@ -2,9 +2,10 @@
 
 Quiki is a simple wiki aimed at developers.
 
-Saving a Page:
-1) Parse content
-2) Validate content
-3) Validate code chunks
-4) Render and save content
-5) Render and save code chunks
+External Dependencies:
+  Ultraviolet for code syntax highlighting
+    gem install ultraviolet
+    If it complains about needed Oniguruma:
+    http://snippets.aktagon.com/snippets/61-Installing-Ultraviolet-and-Oniguruma
+  Graphviz for diagram generation
+    http://graphviz.org/

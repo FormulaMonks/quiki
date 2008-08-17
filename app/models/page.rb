@@ -51,14 +51,26 @@ class Page < ActiveRecord::Base
       @@parsers.collect{ |parser, klass| parser.to_s }.sort
     end
     
+    # TODO: replace w/ permalink_fu, modified to support has_many for
+    # changeable permalinks that leave a trail
     def path(title)
       title.gsub(/#{PATH_REGEX.gsub(/\[/, '[^ ')}/, '').gsub(/\s/, '-')
     end
-    
-    def parse_code_blocks(content)
-      parts = content.scan /(.*?)\n(\-:.*?\n.*?\n\-:.*?)\n(.*)/m
-      parts.empty? ? [content] : [parts[0][0], parts[0][1]] + parse_code_blocks(parts[0][2])
+  
+    def parse_blocks(content, second_pass=false)
+      parts = parse_code_blocks(content) unless second_pass
+      parts = parse_dot_blocks(content) if second_pass || parts.empty?
+      parts.empty? ? [content] : (parse_blocks(parts[0][0], true) + [parts[0][1]] + parse_blocks(parts[0][2]))
     end
+    
+    private
+      def parse_code_blocks(content)
+        content.scan /(.*?)\n(\-:.*?\n.*?\n\-:.*?)\n(.*)/m
+      end
+    
+      def parse_dot_blocks(content)
+        content.scan /(.*?)\n(::\n.*?\n::)\n(.*)/m
+      end
   end
 
   def validate
@@ -98,25 +110,23 @@ class Page < ActiveRecord::Base
       @body_parts = []
 
       return nil if body.nil?      
-
-      # Page.parse_dot_blocks(body.dup.gsub(/\r\n/, "\n")).each do |part|
-      #   if part =~ /^::.*$/ # part is a DOT block
-      #     dot, check = part.scan(/^::\n(.*\n)::(.*?)$/m)[0]
-      #     if check
-      #       @body_parts << DotBlock.new(:dot => dot)
-      #     else
-      #       self.errors.add(:body, "has unclosed DOT block")
-      #     end
-      #   end
-      # end
-
-      Page.parse_code_blocks(body.dup.gsub(/\r\n/, "\n")).each do |part|
+      
+      stripped = body.dup.gsub(/\r\n/, "\n")
+      
+      Page.parse_blocks(body.dup.gsub(/\r\n/, "\n")).each do |part|
         if part =~ /^\-:.*$/ # part is a code block
           syntax, code, check = part.scan(/^\-:(.*?)\n(.*\n)\-:(.*?)$/m)[0]
           if syntax == check
             @body_parts << CodeBlock.new(:code => code, :language => syntax, :theme => CODE_THEME)
           else
             self.errors.add(:body, "has mismatched code highlighter block ('#{syntax}' and '#{check}')")
+          end
+        elsif part =~ /^::.*$/ # part is a DOT block
+          start, code, check = part.scan(/^::(.*?)\n(.*\n)::(.*?)$/m)[0]
+          if start == check
+            @body_parts << DotBlock.new(:code => code)
+          else
+            self.errors.add(:body, "has mismatched DOT code block")
           end
         else
           @body_parts << part
@@ -128,7 +138,6 @@ class Page < ActiveRecord::Base
       return self.rendered = '' if new_record? || body.nil?
 
       self.rendered = []
-
       @body_parts.each do |body_part|
         if body_part.is_a?(CodeBlock)
           body_part.version = next_version
@@ -136,6 +145,8 @@ class Page < ActiveRecord::Base
           # TODO: render this from the Haml partial code_blocks/stamp
           self.rendered << "<p class=\"code_stamp\"><span class=\"syntax\">#{body_part.language.humanize}</span><a href=\"/#{path}/code/#{body_part.id}\">View Source</a></p>"
           self.rendered << body_part.highlighted
+        elsif body_part.is_a?(DotBlock)
+          self.rendered << "<img src=\"#{body_part.render!}\" />"
         else
           self.rendered << Page.render(body_part, parser)
         end
