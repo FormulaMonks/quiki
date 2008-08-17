@@ -6,7 +6,7 @@ $(function() {
 	$("select#page_parser").change(function() {
 		$.getJSON('/parsers/' + $(this).val(), function(json) {
 			$("#parser_reference .reference").html(json.html);
-			$("#parser_reference h3").html(json.parser);
+			$("#sidebar h3").html(json.parser);
 		});
 	});
 
