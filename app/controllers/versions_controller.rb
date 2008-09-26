@@ -3,6 +3,7 @@ class VersionsController < ApplicationController
   
   def index
     @versions = @page.versions.find(:all, :order => 'updated_at DESC')
+    @version = @page.current
   end
   
   def show

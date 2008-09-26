@@ -1,0 +1,27 @@
+- inside_layout 'pages/layout' do
+  - form_for [ @version, @publishing ] do |f|
+    %table
+      %tr
+        %th
+        %th Destination
+        %th URL
+        %th Published
+        %th
+      - Destination.find(:all).each do |destination|
+        %tr
+          %td= f.check_box :destination, :value => destination.id
+          %td= destination
+          %td= destination.url
+          %td= time(destinations.publishings)
+          %td.actions
+            = link_to 'Edit', edit_destination_path(destination)
+            = link_to 'Delete', destination_path(destination), :method => 'delete', :confirm => "Are you sure you want to remove #{destination} from your publishing destinations?"
+      - fields_for Destination.new do |d|
+        %tr
+          %td= f.check_box :destination, :value => 0
+          %td= d.text_field :name
+          %td= d.text_field :url
+          %td
+    = f.submit 'Publish'
+  = @page.rendered
+  

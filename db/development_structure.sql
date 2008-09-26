@@ -12,7 +12,7 @@ SET escape_string_warning = off;
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
 
-COMMENT ON SCHEMA public IS 'Standard public schema';
+COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 SET search_path = public, pg_catalog;
@@ -42,7 +42,6 @@ CREATE TABLE code_blocks (
 --
 
 CREATE SEQUENCE code_blocks_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -57,6 +56,38 @@ ALTER SEQUENCE code_blocks_id_seq OWNED BY code_blocks.id;
 
 
 --
+-- Name: destinations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE destinations (
+    id integer NOT NULL,
+    name character varying(255),
+    url character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: destinations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE destinations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: destinations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE destinations_id_seq OWNED BY destinations.id;
+
+
+--
 -- Name: page_versions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -64,12 +95,12 @@ CREATE TABLE page_versions (
     id integer NOT NULL,
     page_id integer,
     version integer,
-    path character varying(255),
+    path character varying(255) DEFAULT NULL::character varying,
     body text,
     rendered text,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    parser character varying(255),
+    parser character varying(255) DEFAULT NULL::character varying,
     section_id integer,
     title character varying(255) NOT NULL
 );
@@ -80,7 +111,6 @@ CREATE TABLE page_versions (
 --
 
 CREATE SEQUENCE page_versions_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -117,7 +147,6 @@ CREATE TABLE pages (
 --
 
 CREATE SEQUENCE pages_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -146,7 +175,7 @@ CREATE TABLE schema_migrations (
 
 CREATE TABLE sections (
     id integer NOT NULL,
-    name character varying(255)
+    name character varying(255) DEFAULT NULL::character varying
 );
 
 
@@ -155,7 +184,6 @@ CREATE TABLE sections (
 --
 
 CREATE SEQUENCE sections_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -174,6 +202,13 @@ ALTER SEQUENCE sections_id_seq OWNED BY sections.id;
 --
 
 ALTER TABLE code_blocks ALTER COLUMN id SET DEFAULT nextval('code_blocks_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE destinations ALTER COLUMN id SET DEFAULT nextval('destinations_id_seq'::regclass);
 
 
 --
@@ -203,6 +238,14 @@ ALTER TABLE sections ALTER COLUMN id SET DEFAULT nextval('sections_id_seq'::regc
 
 ALTER TABLE ONLY code_blocks
     ADD CONSTRAINT code_blocks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: destinations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY destinations
+    ADD CONSTRAINT destinations_pkey PRIMARY KEY (id);
 
 
 --
@@ -302,3 +345,5 @@ INSERT INTO schema_migrations (version) VALUES ('20080712210113');
 INSERT INTO schema_migrations (version) VALUES ('20080712230833');
 
 INSERT INTO schema_migrations (version) VALUES ('20080718040324');
+
+INSERT INTO schema_migrations (version) VALUES ('20080827084511');

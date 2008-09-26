@@ -28,7 +28,12 @@ class Page < ActiveRecord::Base
   # force open the dynamic Page::Version class created by acts_as_versioned
   class Version < ActiveRecord::Base
     has_many :code_blocks, :finder_sql => 'SELECT * FROM code_blocks WHERE code_blocks.version = #{self.version} AND code_blocks.page_id = #{self.page_id}'
+    
+    def current?
+      page.version == self.version
+    end
   end
+  has_one :current, :class_name => 'Version', :conditions => 'version = #{self.version}'
   
   named_scope :without_home, :conditions => [ 'pages.path <> ?', 'Home' ]
   named_scope :orphaned, :conditions => 'pages.section_id IS NULL'

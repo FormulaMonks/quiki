@@ -1,0 +1,16 @@
+#header
+  %h1 Publishing Destinations
+%table#destinations
+  %tr
+    %th.name Name
+    %th.url URL
+  - for destination in @destinations
+    %tr
+      %td= destination.name
+      %td= destination.url
+- form_for @destination || Destination.new do |f|
+  .name
+    = f.text_field :name
+  .url
+    = f.text_field :url
+  = f.submit 'Create'

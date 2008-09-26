@@ -16,7 +16,11 @@ class PagesController < ApplicationController
   end
   
   def show
-    redirect_to new_page_path(:page => { :path => params[:path] }) and return unless @page
+    if @page
+      @version = @page.current
+    else
+      redirect_to new_page_path(:page => { :path => params[:path] }) and return
+    end
   end
   
   def edit

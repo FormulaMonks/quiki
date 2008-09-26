@@ -1,7 +1,5 @@
 # Methods added to this helper will be available to all templates in the application.
-module ApplicationHelper
-  DATETIME_FORMATS = { :pretty_date => "%b %d %Y", :pretty_datetime => "%b %d %Y, %I:%M %p" }.freeze
-  
+module ApplicationHelper  
   def notices(text, klass=nil)
     unless text.nil?
       text = [text] unless text.is_a?(Array)
@@ -9,25 +7,29 @@ module ApplicationHelper
     end
   end
   
-  def current_if(proposition)
-    proposition ? 'current' : nil
+  def action_is?(action)
+    params[:action] == action.to_sym
   end
   
-  # if the given time is less than 1 day old, it uses the time in words ago
-  # helper to output the time since. if it's more than 1 day old it outputs the
-  # time according to the given stftime format
-  def smart_datetime(datetime, format=nil)
-    if happened_today?(datetime)
-      time_ago_in_words(datetime) + ' ago'
-    else
-      datetime.strftime(format || DATETIME_FORMATS[:pretty_datetime])
+  def selectable_link_to(title, url, selected=false, options={})
+    stateful_link_to title, url, selected ? :selected : :active, options
+  end
+  
+  def stateful_link_to(title, url, state=:active, options={})
+    case state
+    when :disabled
+      haml_tag :span, title, :class => 'disabled_link'
+    when :active
+      link_to title, url, options
+    when :selected
+      haml_tag :span, title, :class => 'selected_link'
     end
   end
   
-  def happened_today?(datetime)
-    datetime > 1.days.ago
+  def current_if(proposition)
+    proposition ? 'current' : nil
   end
-  
+    
   def columns_of(collection, columns, options={}, &block)
     i = 0
     html = capture_haml do

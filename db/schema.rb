@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080718040324) do
+ActiveRecord::Schema.define(:version => 20080827084511) do
 
   create_table "code_blocks", :force => true do |t|
     t.integer  "page_id"
@@ -25,6 +25,13 @@ ActiveRecord::Schema.define(:version => 20080718040324) do
   add_index "code_blocks", ["language"], :name => "index_code_blocks_on_language"
   add_index "code_blocks", ["page_id"], :name => "index_code_blocks_on_page_id"
   add_index "code_blocks", ["version"], :name => "index_code_blocks_on_version"
+
+  create_table "destinations", :force => true do |t|
+    t.string   "name"
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "page_versions", :force => true do |t|
     t.integer  "page_id"

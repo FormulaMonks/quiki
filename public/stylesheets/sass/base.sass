@@ -31,7 +31,7 @@ ul.menu
     :float left
     &.selected
       :background-color #fff
-    a
+    a, span.selected_link
       :padding 5px
       :display block
     p
@@ -97,6 +97,7 @@ ul#recent_changes
     :float left
   
 #content
+  +clearfix
   :padding 0px 10px 10px 10px
   :background #fff url("/images/decor/header-corner-bottom.gif") bottom right no-repeat
   h1
@@ -139,6 +140,13 @@ ul#main
       
 p img
   :float none
+  
+.selected_link
+  :font-weight bold
+.disabled_link
+  :color #999
+
+// pages ======================================================================
 
 // page menu ==================================================================
 #page_menu
@@ -255,6 +263,17 @@ body.pages.show
   ul.menu
     :padding-top 5px
     :float right
+    
+ul#version.menu
+  :font-size 10px
+  :float right
+  li.date
+    :border 0px
+  li
+    :border-left 1px solid #666
+    :padding 0px 8px
+    a, span
+      :padding 0px
   
 // parser reference ===========================================================
 #parser_reference
@@ -303,3 +322,21 @@ ul.syntax
   :margin 0px
   :float left
   :width 220px
+
+// destinations ===============================================================
+table#destinations, form#new_destination
+  .name
+    :width 200px
+  .url
+    :width 400px
+    
+table#destinations
+  :margin-bottom 0px
+    
+form#new_destination
+  +clearfix
+  .name, .url
+    :float left
+    :padding 0px 10px 0px 5px
+  .name input
+    :width 180px
