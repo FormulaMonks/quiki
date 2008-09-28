@@ -13,11 +13,15 @@ class PublishingsController < ApplicationController
     destinations << @destination if create_destination?
     
     if destinations.empty?
-      flash[:error] = 'Nothing seleted to publish to.'
+      append_error 'Nothing seleted to publish to.'
     else
       destinations.each do |destination|
         publishing = destination.publishings.create :page_version => page_version
-        flash[:success]
+        if publishing.response.is_a?(Net::HTTPSuccess)
+          append_success "Succesfully published to #{destination}."
+        else
+          append_error "A #{publishing.response.code} error occured publishing to #{destination}."
+        end
       end
     end
     

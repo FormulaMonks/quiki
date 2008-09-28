@@ -26,6 +26,6 @@ class Publishing < ActiveRecord::Base
     request.basic_auth url.user, url.password
     request.set_form_data(Hash[*(page_version.attributes.collect{ |k, v| ["page[#{k}]", v] }.flatten)])
     
-    response = http.request(request)
+    self.response = http.request(request)
   end
 end

@@ -14,9 +14,17 @@ class ApplicationController < ActionController::Base
   helper_method :site_config
   
   def append_message(message, type=:error, now=false)
-    stack = now ? flash.now[type] : flash[type]
-    stack ||= []
-    stack << message
+    stack = now ? flash.now : flash
+    stack[type] ||= []
+    stack[type] << message
+  end
+  
+  def append_error(message, now=false)
+    append_message message, :error
+  end
+  
+  def append_success(message, now=false)
+    append_message message, :success
   end
   
   def append_errors_from(model, now=false)
