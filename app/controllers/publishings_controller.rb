@@ -1,4 +1,6 @@
 class PublishingsController < ApplicationController
+  before_filter :create_destination, :only => :create
+  
   def new
     @version = Page::Version.find params[:page_version_id]
     @page = @version.page
@@ -8,10 +10,15 @@ class PublishingsController < ApplicationController
   def create
     page_version = Page::Version.find params[:page_version_id]
     destinations = destination_ids? ? Destination.find(destination_ids) : []
-    destinations << create_destination if create_destination?
-         
-    destinations.each do |destination|
-      destination.publishings.create :page_version => page_version
+    destinations << @destination if create_destination?
+    
+    if destinations.empty?
+      flash[:error] = 'Nothing seleted to publish to.'
+    else
+      destinations.each do |destination|
+        publishing = destination.publishings.create :page_version => page_version
+        flash[:success]
+      end
     end
     
     redirect_to :back
@@ -19,11 +26,11 @@ class PublishingsController < ApplicationController
   
   private
     def create_destination
-      unless destination = Destination.create(params[:destination])
-        append_errors_from destination
+      return unless create_destination?
+      if (@destination = Destination.create(params[:destination])).new_record?
+        append_errors_from @destination
         redirect_to :back and return
       end
-      destination
     end
   
     def create_destination?

@@ -13,6 +13,8 @@ class Publishing < ActiveRecord::Base
   
   before_create :publish
   
+  attr_accessor :response
+  
   def publish
     url = URI.parse(destination.url)
     
@@ -24,6 +26,6 @@ class Publishing < ActiveRecord::Base
     request.basic_auth url.user, url.password
     request.set_form_data(Hash[*(page_version.attributes.collect{ |k, v| ["page[#{k}]", v] }.flatten)])
     
-    http.request(request)
+    response = http.request(request)
   end
 end

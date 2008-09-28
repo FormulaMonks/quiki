@@ -3,16 +3,15 @@
     %table
       %tr
         %th
-        %th Destination
+        %th Name
         %th URL
         %th
       - Destination.find(:all).each do |destination|
         %tr
           %td= f.check_box :destination, { :name => 'publishing[destination][]' }, destination.id, nil
           %td= destination
-          %td= destination.url
+          %td= destination.masked_url
           %td.actions
-            = link_to 'Edit', edit_destination_path(destination)
             = link_to 'Delete', destination_path(destination), :method => 'delete', :confirm => "Are you sure you want to remove #{destination} from your publishing destinations?"
       - fields_for Destination.new do |d|
         %tr
@@ -20,6 +19,7 @@
           %td= d.text_field :name
           %td= d.text_field :url
           %td
-    = f.submit 'Publish'
-  = @page.rendered
-  
+    %ul
+      %li= f.submit 'Publish'
+      %li.cancel= link_to 'Cancel', page_version_path(@version.page, @version.version)
+  = @version.rendered
