@@ -1,12 +1,12 @@
 #header
   %h1= @page
   %ul.menu
-    %li= selectable_link_to 'Versions', page_versions_path(@page), controller.is_a?(VersionsController) && action_is?(:index)
-    %li= selectable_link_to 'Publish', new_page_version_publishing_path(@version), controller.is_a?(PublishingsController)
     %li= selectable_link_to 'Edit', [ :edit, @page ], controller.is_a?(PagesController) && action_is?(:edit)
     %li= link_to 'Delete', @page, :method => :delete, :confirm => "Are you sure you want to delete #{@page}?"
 #page_content= yield
 %ul#version.menu
   %li.date= time(@version.updated_at)
+  %li= selectable_link_to 'Versions', page_versions_path(@page), controller.is_a?(VersionsController) && action_is?(:index)
   %li= stateful_link_to 'Current', @page, @version.current? ? :selected : :active
   %li= stateful_link_to 'Restore', page_path(@page, :page => { :version => @version.version }), @version.current? ? :disabled : :active, :method => :put
+  %li= selectable_link_to 'Publish', new_page_version_publishing_path(@version), controller.is_a?(PublishingsController)

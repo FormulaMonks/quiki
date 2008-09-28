@@ -73,7 +73,6 @@ CREATE TABLE destinations (
 --
 
 CREATE SEQUENCE destinations_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -161,6 +160,37 @@ ALTER SEQUENCE pages_id_seq OWNED BY pages.id;
 
 
 --
+-- Name: publishings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE publishings (
+    id integer NOT NULL,
+    destination_id integer,
+    page_version_id integer,
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: publishings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE publishings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: publishings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE publishings_id_seq OWNED BY publishings.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -229,6 +259,13 @@ ALTER TABLE pages ALTER COLUMN id SET DEFAULT nextval('pages_id_seq'::regclass);
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE publishings ALTER COLUMN id SET DEFAULT nextval('publishings_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE sections ALTER COLUMN id SET DEFAULT nextval('sections_id_seq'::regclass);
 
 
@@ -262,6 +299,14 @@ ALTER TABLE ONLY page_versions
 
 ALTER TABLE ONLY pages
     ADD CONSTRAINT pages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: publishings_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY publishings
+    ADD CONSTRAINT publishings_pkey PRIMARY KEY (id);
 
 
 --
@@ -322,6 +367,20 @@ CREATE INDEX index_pages_on_section_id ON pages USING btree (section_id);
 
 
 --
+-- Name: index_publishings_on_destination_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_publishings_on_destination_id ON publishings USING btree (destination_id);
+
+
+--
+-- Name: index_publishings_on_page_version_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_publishings_on_page_version_id ON publishings USING btree (page_version_id);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -347,3 +406,5 @@ INSERT INTO schema_migrations (version) VALUES ('20080712230833');
 INSERT INTO schema_migrations (version) VALUES ('20080718040324');
 
 INSERT INTO schema_migrations (version) VALUES ('20080827084511');
+
+INSERT INTO schema_migrations (version) VALUES ('20080927224142');

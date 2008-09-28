@@ -7,8 +7,11 @@ module ApplicationHelper
     end
   end
   
-  def action_is?(action)
-    params[:action] == action.to_sym
+  def action_is?(*actions)
+    actions.each do |action|
+      return true if params[:action] == action.to_sym
+    end
+    return false
   end
   
   def selectable_link_to(title, url, selected=false, options={})

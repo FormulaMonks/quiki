@@ -7,11 +7,20 @@ class DestinationsController < ApplicationController
     @destination = Destination.new params[:destination]
   
     if @destination.save
-      flash[:success] = "#{@destination.name} is now available for publishing."
+      flash[:success] = "#{@destination} is now available for publishing."
       redirect_to 'index'
     else
-      flash.now[:error] = "Failed to save #{@destination.name}."
+      flash.now[:error] = "Failed to save #{@destination}."
       render :action => :index
     end
+  end
+  
+  def destroy
+    if (@destination = Destination.find(params[:id])).destroy
+      flash[:success] = "#{@destination} deleted successfully."
+    else
+      flash[:error] = "Failed to delete #{@destination}."
+    end
+    redirect_to :back
   end
 end

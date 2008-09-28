@@ -7,12 +7,16 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password
   
   before_filter :initialize_page_menu
-    
+  
   def site_config(key)
     SITE_CONFIG[key.to_s]
   end
   helper_method :site_config
-    
+  
+  def append_errors_from(model, now=false)
+    now ? flash.now[:error] = model.errors.full_messages : flash[:error] = model.errors.full_messages
+  end
+  
   protected
     def page_options(options={})
       { :size => 10, :current => params[:page] }.merge(options)

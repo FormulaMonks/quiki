@@ -1,7 +1,8 @@
 class Destination < ActiveRecord::Base
-  has_many :publishings, :through => :page_versions do
-    def latest
-      find(:first, :order => 'publishings.created_at DESC')
+  has_many :publishings
+  has_many :page_versions, :through => :publishings do
+    def most_recently_published
+      find(:first, :include => :publishing, :order => 'publishings.created_at DESC')
     end
   end
   

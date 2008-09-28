@@ -61,7 +61,7 @@ class PagesController < ApplicationController
         format.json { render :json => { :html => @page.rendered }, :status => :ok }
       else
         format.html do
-          flash[:error] = @page.errors.full_messages
+          append_errors_from @page
           render :action => 'edit', :layout => 'pages/edit_layout.html.haml'
         end
         format.json { render :json => { :errors => @page.errors.full_messages }, :status => :unprocessable_entity }
