@@ -11,21 +11,27 @@ class Publishing < ActiveRecord::Base
   validates_presence_of :destination_id
   validates_presence_of :page_version
   
-  before_create :publish
-  
   attr_accessor :response
   
-  def publish
-    url = URI.parse(destination.url)
-    
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = (url.scheme == 'https')
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    
-    request = Net::HTTP::Post.new(url.path.blank? ? '/' : url.path)
-    request.basic_auth url.user, url.password
-    request.set_form_data(Hash[*(page_version.attributes.collect{ |k, v| ["page[#{k}]", v] }.flatten)])
-    
-    self.response = http.request(request)
+  def validate
+    if errors.empty?
+      publish!
+      errors.add :url, "resulted in a #{self.response.code} publishing to #{destination}." unless self.response.is_a?(Net::HTTPSuccess)
+    end
   end
+  
+  private
+    def publish!
+      url = URI.parse(destination.url)
+    
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = (url.scheme == 'https')
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    
+      request = Net::HTTP::Post.new(url.path.blank? ? '/' : url.path)
+      request.basic_auth url.user, url.password
+      request.set_form_data(Hash[*(page_version.attributes.collect{ |k, v| ["page[#{k}]", v] }.flatten)])
+    
+      self.response = http.request(request)    
+    end
 end

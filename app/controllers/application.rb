@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   end
   
   def append_errors_from(model, now=false)
-    now ? flash.now[:error] = model.errors.full_messages : flash[:error] = model.errors.full_messages
+    append_error model.errors.full_messages, now
   end
   
   protected
