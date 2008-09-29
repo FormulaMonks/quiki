@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   end
   
   def append_errors_from(model, now=false)
-    append_error model.errors.full_messages, now
+    model.errors.full_messages.each { |message| append_error message, now }
   end
   
   protected
