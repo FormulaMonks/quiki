@@ -4,6 +4,7 @@ class PagesController < ApplicationController
   before_filter :find_page_by_path, :only => [ :show, :edit, :destroy, :update ]
   
   def new
+    @page = Page.new params[:page].merge(:title => params[:page][:path])
   end
   
   def index
