@@ -4,7 +4,7 @@ $(function() {
 	});
 	
 	$("select#page_parser").change(function() {
-		$.getJSON('/parsers/' + $(this).val(), function(json) {
+		$.getJSON('/tools/parsers/' + $(this).val(), function(json) {
 			$("#parser_reference .reference").html(json.html);
 			$("#sidebar h3").html(json.parser);
 		});
