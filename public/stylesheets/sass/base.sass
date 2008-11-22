@@ -145,6 +145,10 @@ p img
   :font-weight bold
 .disabled_link
   :color #999
+  
+// jquery tabs ----------------------------------------------------------------
+.ui-tabs-hide
+  display: none
 
 // pages ======================================================================
 
@@ -282,6 +286,24 @@ ul#version.menu
     :background-color #eee
   dd.rule_hack
     :margin-top 20px
+    
+#sidebar_menu
+  +clearfix
+  :list-style-type none
+  :margin 0px 0px 10px 0px
+  :border-bottom 1px solid #aaa
+  li
+    :float left
+    :padding 4px 8px
+    &.ui-tabs-selected
+      :background-color #fff
+      
+ul#assets
+  :margin 0px
+  :list-style-type none
+  li
+    :float left
+    :margin-right 5px
 
 // recently updated pages =====================================================
 #recent_pages

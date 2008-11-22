@@ -11,7 +11,7 @@ class PagesController < ApplicationController
     @pages = Page.recent.find(:all, :limit => 25)
     
     respond_to do |format|
-      format.tab  { render :partial => 'pages/page_menu.html.haml', :layout => false }
+      format.tab  { render :partial => 'pages/menu.html.haml', :layout => false }
       format.html {}
     end
   end

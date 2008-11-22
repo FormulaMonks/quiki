@@ -1,12 +1,16 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options :path_prefix => '/tools' do |tools|
-    tools.parser 'parsers/:parser', :controller => 'parsers', :action => 'show', :parser => '/[a-z0-9\-_]+/', :conditions => { :method => :get }
+    tools.with_options :controller => 'parsers', :action => 'show', :parser => '/[a-z0-9\-_]+/', :conditions => { :method => :get } do |parsers|
+      parsers.parser 'parsers/:parser'
+      parsers.formatted_parser 'parsers/:parser.:format'
+    end
     tools.resources :sections
     tools.resources :page_versions, :has_many => :publishings
     tools.resources :pages, :has_many => :versions
     tools.resources :code_blocks
     tools.resources :syntaxes
     tools.resources :destinations
+    tools.resources :assets
   end
   
   map.with_options :controller => 'pages', :path => /#{Page::PATH_REGEX}/ do |pages|

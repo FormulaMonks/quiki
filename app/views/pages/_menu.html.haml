@@ -1,0 +1,26 @@
+#page_menu
+  #header
+    %h3 Pages
+    = text_field_tag :page_search
+  %ul.pages
+    = render :partial => 'pages/item', :collection => @base_orphaned_pages
+  %ul.sections.menu
+    - for section in @base_sections
+      %li.section
+        - form_for section do |f|
+          = f.text_field :name
+        = link_to section, section, :id => section.id, :class => 'section'
+        = link_to 'Edit', [ :edit, section ], :class => 'edit'
+        = link_to 'Delete', section, :method => 'delete', :confirm => "Are you sure you want to remove #{section}? All #{section.pages.size} pages will be moved outside of any section and can then be moved elsewhere.", :class => 'destroy'
+        %ul.pages{ :class => current_if(@page && section.pages.include?(@page)) }
+          = render :partial => 'pages/item', :collection => section.pages
+          %li.page.new
+            - form_for Page.new(:section_id => section.id) do |f|
+              = f.hidden_field :section_id
+              = f.text_field :title
+              = f.submit 'New'
+    %li
+      = link_to 'New Section', new_section_path, :id => 'new_section_trigger'
+      - form_for Section.new do |f|
+        = f.text_field :name
+        = f.submit 'New'

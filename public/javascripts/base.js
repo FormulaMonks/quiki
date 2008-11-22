@@ -12,15 +12,16 @@ $(function() {
 
 	initialize_page_menu();
 
-	// $("ul#sidebar_menu a").tabify();
-	// $("ul#sidebar_menu").tabs({
-	// 	load : function(ui) {
-	// 		switch(ui.tab.id) {
-	// 			case 'pages_tab':initialize_page_menu();break;
-	// 			case 'code_tab':initialize_code_menu();break;
-	// 		}
-	// 	}
-	// });
+	$("ul#sidebar_menu a").tabify();
+	$("ul#sidebar_menu").tabs({
+		load : function(ui) {
+			switch(ui.tab.id) {
+				case 'reference_tab':break;
+				case 'pages_tab':initialize_page_menu();break;
+				case 'assets_tab':break;
+			}
+		}
+	});
 	
 	// easter-egg :)
 	var loved = false;
@@ -30,21 +31,20 @@ $(function() {
 function initialize_page_menu() {
 	pages = $('#page_menu ul.pages li.page');
 	pages.draggable({
-		handle      : 'span.handle',
-		opacity     : '.8',
-		revert      : true,
-		zIndex      : 100,
-		start       : function() {},
-		drag        : function() {},
-		stop        : function() {}
+		handle  : 'span.handle',
+		opacity : '.8',
+		revert  : true,
+		zIndex  : 100,
+		start   : function() {},
+		drag    : function() {},
+		stop    : function() {}
 	});
-	
 
 	sections = $("#page_menu ul.sections li.section");
 	$('a.section', sections).droppable({
-		accept      : '#page_menu ul.pages li.page',
-		hoverClass  : 'hover',
-		drop        : function(e, ui) {
+		accept     : '#page_menu ul.pages li.page',
+		hoverClass : 'hover',
+		drop       : function(e, ui) {
 			form = $('form', ui.draggable);
 			$("input[@name='page[section_id]']", form).val(this.id);
 			form.get(0).submit();

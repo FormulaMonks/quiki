@@ -1,8 +1,7 @@
 - inside_layout 'base' do
   = yield
   - content_for :sidebar do
-    #header
-      %h3= @page.parser.humanize
-    #parser_reference
-      .reference
-        = render :partial => "parsers/#{@page.parser}"
+    %ul#sidebar_menu
+      %li= link_to 'Reference', parser_path(@page.parser), :id => 'reference_tab'
+      %li= link_to 'Pages', pages_path, :id => 'pages_tab'
+      %li= link_to 'Assets', assets_path, :id => 'assets_tab'

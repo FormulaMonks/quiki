@@ -1,0 +1,42 @@
+%dl
+  %dt h1.
+  %dd
+    %h1 H1
+  %dt h3.
+  %dd
+    %h3 H3
+  %dt "Link":http://www.example.com/
+  %dd= link_to 'Link', 'http://www.example.com/'
+  %dt bq. This is blockquoted
+  %dd
+    %blockquote This is blockquoted
+  %dt @inline code@
+  %dd
+    %code inline code
+  %dt # ordered list item
+  %dd
+    %ol
+      %li ordered list item
+  %dt ## 2nd level ordered list item
+  %dd
+    %ol
+      %li 
+        %li 2nd level ordered list item
+  %dt * unordered list item
+  %dd
+    %ul
+      %li unordered list item
+  %dt _italic_
+  %dd
+    %em italic
+  %dt *bold*
+  %dd
+    %strong bold
+  %dt **italic and bold**
+  %dd
+    %strong
+      %em italic and bold
+  %dt %{color:red}red
+  %dd
+    %span{:style => 'color:red;'} red
+%p= link_to 'Full Reference', 'http://hobix.com/textile/'

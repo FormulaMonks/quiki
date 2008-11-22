@@ -1,0 +1,3 @@
+%ul#assets
+  - for asset in @assets
+    %li= link_to image_tag(asset.thumbnail(:size => '40x40', :crop => true)), asset.thumbnail(:size => '40x40', :crop => true)
